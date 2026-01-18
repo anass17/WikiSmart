@@ -7,12 +7,12 @@ class Settings(BaseSettings):
     db_port: int
     db_name: str
 
-    # secret_key: str
-    # algorithm: str
-    # access_token_expire_minutes: int
+    secret_key: str
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 30
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file="../.env",
         extra="ignore",
         case_sensitive=False
     )
