@@ -8,13 +8,9 @@ controller = ContentController()
 
 # Endpoint Wikipedia
 @router.post("/wikipedia")
-def ingest_wikipedia(keyword: str = Form(...), sentences: int = 0):
-    """
-    Ingest content from Wikipedia.
-    Optional: return a summary with 'sentences' param.
-    """
-    text = controller.get_wikipedia_content(keyword, sentences)
-    return {"text": text}
+def ingest_wikipedia(url: str = Form(...), sentences: int = 0):
+    title = controller.extract_wikipedia_title(url)
+    return {"text": title}
 
 
 

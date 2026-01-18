@@ -3,6 +3,7 @@ import requests
 from pypdf import PdfReader
 from fastapi import UploadFile, HTTPException
 from wikipedia.exceptions import DisambiguationError, PageError
+from urllib.parse import urlparse, unquote
 
 
 class ContentController:
@@ -19,6 +20,21 @@ class ContentController:
         wikipedia.requests = self.session
         wikipedia.set_lang(lang)
 
+
+
+    def extract_wikipedia_title(self, url: str) -> str:
+        parsed_url = urlparse(url)
+        path = parsed_url.path  # ex: "/wiki/Python"
+
+        if not parsed_url.netloc.endswith("wikipedia.org"):
+            raise ValueError("Ce n'est pas une URL Wikipedia")
+
+        if not path.startswith("/wiki/"):
+            raise ValueError("URL Wikipedia invalide")
+
+        title = path.replace("/wiki/", "", 1)
+        
+        return unquote(title)
 
 
     def get_wikipedia_content(self, keyword: str, sentences: int = 0) -> str:
