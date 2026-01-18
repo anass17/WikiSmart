@@ -33,7 +33,9 @@ class ContentController:
             raise ValueError("URL Wikipedia invalide")
 
         title = path.replace("/wiki/", "", 1)
-        
+
+        title = title.replace('_', ' ')
+
         return unquote(title)
 
 
