@@ -30,7 +30,7 @@ class ContentController:
             raise ValueError("Ce n'est pas une URL Wikipedia")
 
         if not path.startswith("/wiki/"):
-            raise ValueError("URL Wikipedia invalide")
+            raise ValueError("Chemin Wikipedia invalide")
 
         title = path.replace("/wiki/", "", 1)
 
