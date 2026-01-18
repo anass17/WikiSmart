@@ -28,5 +28,11 @@ Base.metadata.create_all(bind=engine)
 
 @pytest.fixture
 def client():
+    
+    # Drop all tables first (clean slate)
+    Base.metadata.drop_all(bind=engine)
+    # Create tables
+    Base.metadata.create_all(bind=engine)
+
     with TestClient(app) as c:
         yield c
