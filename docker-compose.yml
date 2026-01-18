@@ -16,8 +16,8 @@ services:
 
   fastapi:
     build: 
-      context: .
-      dockerfile: ./Backend/Dockerfile
+      context: ./backend
+      dockerfile: ./Dockerfile
     container_name: wikismart_fastapi
     depends_on:
       - postgres
@@ -26,7 +26,20 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./backend:/app
+
+  test:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: wikismart_tests
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    volumes:
+      - ./Backend:/app
+    command: pytest --color=yes
 
 volumes:
   pgdata:

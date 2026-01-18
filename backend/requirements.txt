@@ -11,3 +11,4 @@ wikipedia
 pytest
 pytest-mock
 requests-mock
+httpx
