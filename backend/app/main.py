@@ -4,6 +4,7 @@ from app.db.base import Base
 from app.db.session import engine
 from app.routes.health import router as health_router
 from app.routes.auth_routes import router as auth_router
+from app.routes.content_routes import router as content_router
 
 
 
@@ -22,6 +23,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(health_router)
 app.include_router(auth_router)
+app.include_router(content_router)
 
 
 @app.get('/')
