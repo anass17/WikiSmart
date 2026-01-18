@@ -1,7 +1,7 @@
 import wikipedia
 import requests
 from pypdf import PdfReader
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
 from wikipedia.exceptions import DisambiguationError, PageError
 
 
@@ -39,10 +39,18 @@ class ContentController:
 
 
     def get_pdf_content(self, file: UploadFile) -> str:
+
+        # Validate file type
+        if file.content_type != "application/pdf":
+            raise HTTPException(status_code=400, detail="Seuls les fichiers PDF sont acceptés.")
+
+        # Save file temporarily
         file_path = f"/tmp/{file.filename}"
         with open(file_path, "wb") as f:
             f.write(file.file.read())
 
+        # Extract PDF content using pypdf
         reader = PdfReader(file_path)
         text = "\n".join([page.extract_text() for page in reader.pages])
+        
         return text
