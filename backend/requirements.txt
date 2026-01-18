@@ -13,3 +13,5 @@ pytest-mock
 requests-mock
 httpx
 python-multipart
+langchain
+pypdf

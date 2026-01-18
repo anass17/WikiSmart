@@ -1,31 +1,48 @@
 import wikipedia
 import requests
-# from langchain.document_loaders import PyPDFLoader
-# from fastapi import UploadFile
+from pypdf import PdfReader
+from fastapi import UploadFile
+from wikipedia.exceptions import DisambiguationError, PageError
+
+
+class ContentController:
+    def __init__(
+        self,
+        user_agent: str = "MyWikiProject/1.0 (contact: email@example.com)",
+        lang: str = "fr",
+    ):
+        """
+        Initialise la session Wikipedia avec un User-Agent et la langue.
+        """
+        self.session = requests.Session()
+        self.session.headers.update({"User-Agent": user_agent})
+        wikipedia.requests = self.session
+        wikipedia.set_lang(lang)
 
 
 
-# Configurer la session avec un User-Agent
-session = requests.Session()
-session.headers.update({
-    "User-Agent": "MyWikiProject/1.0 (contact: email@example.com)"
-})
-wikipedia.requests = session
-wikipedia.set_lang("fr")
+    def get_wikipedia_content(self, keyword: str, sentences: int = 0) -> str:
+        """
+        Récupère le contenu de Wikipedia pour un mot clé.
+        Si sentences > 0, retourne un résumé.
+        """
+        try:
+            if sentences > 0:
+                return wikipedia.summary(keyword, sentences=sentences)
+            page = wikipedia.page(keyword)
+            return page.content
+        except DisambiguationError as e:
+            return f"Plusieurs pages possibles: {e.options}"
+        except PageError:
+            return "Page introuvable"
 
 
 
-def get_wikipedia_content(keyword: str, sentences: int = 0) -> str:
-    """
-    Récupère le contenu de Wikipedia pour un mot clé.
-    Si sentences > 0, retourne un résumé.
-    """
-    try:
-        if sentences > 0:
-            return wikipedia.summary(keyword, sentences=sentences)
-        page = wikipedia.page(keyword)
-        return page.content
-    except wikipedia.exceptions.DisambiguationError as e:
-        return f"Plusieurs pages possibles: {e.options}"
-    except wikipedia.exceptions.PageError:
-        return "Page introuvable"
+    def get_pdf_content(self, file: UploadFile) -> str:
+        file_path = f"/tmp/{file.filename}"
+        with open(file_path, "wb") as f:
+            f.write(file.file.read())
+
+        reader = PdfReader(file_path)
+        text = "\n".join([page.extract_text() for page in reader.pages])
+        return text
