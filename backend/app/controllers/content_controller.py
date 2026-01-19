@@ -73,6 +73,10 @@ class ContentController:
         # Cas : pas de sections
         if not matches:
             return {"Introduction": content.strip()}
+        
+        intro_text = content[:matches[0].start()].strip()
+        if intro_text:
+            sections["Introduction"] = intro_text
 
         for i, match in enumerate(matches):
             section_title = match.group(1)
