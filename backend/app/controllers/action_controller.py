@@ -18,8 +18,10 @@ class ActionController:
             model="mixtral-8x7b-32768",
             messages=[
                 {"role": "system", "content": "Tu es un assistant concis et précis."},
-                {"role": "user", "content": f"Résume ce texte de façon concise :\n\n{text}"}
+                {"role": "user", "content": f"Résume ce texte :\n\n{text}"}
             ],
+            temperature=0.2,
+            max_tokens=100,
         )
         
         # Retourne le texte du résumé

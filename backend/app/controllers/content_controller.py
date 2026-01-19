@@ -77,6 +77,13 @@ class ContentController:
             section_text = content[start:end].strip()
             sections[section_title] = section_text
 
+
+        # Supprimer les article non-pertinent
+
+        sections.pop('Bibliographie', '')
+        sections.pop('Articles connexes', '')
+        sections.pop('Liens externes', '')
+
         return sections
 
 
