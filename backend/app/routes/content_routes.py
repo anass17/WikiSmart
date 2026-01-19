@@ -10,7 +10,12 @@ controller = ContentController()
 @router.post("/wikipedia")
 def ingest_wikipedia(url: str = Form(...), sentences: int = 0):
     title = controller.extract_wikipedia_title(url)
-    return {"text": title}
+
+    content = controller.get_wikipedia_content(title, sentences)
+
+    section = controller.split_wikipedia_sections(content)
+
+    return {"sections": section}
 
 
 

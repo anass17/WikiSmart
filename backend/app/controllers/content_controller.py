@@ -4,6 +4,7 @@ from pypdf import PdfReader
 from fastapi import UploadFile, HTTPException
 from wikipedia.exceptions import DisambiguationError, PageError
 from urllib.parse import urlparse, unquote
+import re
 
 
 class ContentController:
@@ -37,6 +38,7 @@ class ContentController:
         title = title.replace('_', ' ')
 
         return unquote(title)
+    
 
 
     def get_wikipedia_content(self, keyword: str, sentences: int = 0) -> str:
@@ -53,6 +55,35 @@ class ContentController:
             return f"Plusieurs pages possibles: {e.options}"
         except PageError:
             return "Page introuvable"
+
+
+
+    def split_wikipedia_sections(self, content: str) -> dict:
+        """
+        Segmente un article Wikipedia en sections basées sur
+        === Titre de section ===
+        """
+        sections = {}
+
+        # Regex pour capturer les titres === Titre ===
+        pattern = re.compile(r"===\s*(.*?)\s*===")
+
+        matches = list(pattern.finditer(content))
+
+        # Cas : pas de sections
+        if not matches:
+            return {"Introduction": content.strip()}
+
+        for i, match in enumerate(matches):
+            section_title = match.group(1)
+
+            start = match.end()
+            end = matches[i + 1].start() if i + 1 < len(matches) else len(content)
+
+            section_text = content[start:end].strip()
+            sections[section_title] = section_text
+
+        return sections
 
 
 
