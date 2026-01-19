@@ -4,11 +4,7 @@ from pypdf import PdfReader
 from fastapi import UploadFile, HTTPException
 from wikipedia.exceptions import DisambiguationError, PageError
 from urllib.parse import urlparse, unquote
-from app.core.config import settings
 import re
-from groq import Groq
-
-API_KEY = settings.api_key
 
 
 class ContentController:
@@ -101,9 +97,3 @@ class ContentController:
         text = "\n".join([page.extract_text() for page in reader.pages])
         
         return text
-    
-
-
-    def summarize_text(self, text: str) -> str:
-
-        client = Groq(api_key=API_KEY)
