@@ -4,13 +4,17 @@ from pypdf import PdfReader
 from fastapi import UploadFile, HTTPException
 from wikipedia.exceptions import DisambiguationError, PageError
 from urllib.parse import urlparse, unquote
+from app.core.config import settings
 import re
+from groq import Groq
+
+API_KEY = settings.api_key
 
 
 class ContentController:
     def __init__(
         self,
-        user_agent: str = "MyWikiProject/1.0 (contact: email@example.com)",
+        user_agent: str = "WikiSmart/1.0 (contact: email@example.com)",
         lang: str = "fr",
     ):
         """
@@ -41,15 +45,9 @@ class ContentController:
     
 
 
-    def get_wikipedia_content(self, keyword: str, sentences: int = 0) -> str:
-        """
-        Récupère le contenu de Wikipedia pour un mot clé.
-        Si sentences > 0, retourne un résumé.
-        """
+    def get_wikipedia_content(self, title: str) -> str:
         try:
-            if sentences > 0:
-                return wikipedia.summary(keyword, sentences=sentences)
-            page = wikipedia.page(keyword)
+            page = wikipedia.page(title)
             return page.content
         except DisambiguationError as e:
             return f"Plusieurs pages possibles: {e.options}"
@@ -59,10 +57,6 @@ class ContentController:
 
 
     def split_wikipedia_sections(self, content: str) -> dict:
-        """
-        Segmente un article Wikipedia en sections basées sur
-        === Titre de section ===
-        """
         sections = {}
 
         # Regex pour capturer les titres === Titre ===
@@ -107,3 +101,9 @@ class ContentController:
         text = "\n".join([page.extract_text() for page in reader.pages])
         
         return text
+    
+
+
+    def summarize_text(self, text: str) -> str:
+
+        client = Groq(api_key=API_KEY)

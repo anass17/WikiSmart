@@ -16,3 +16,4 @@ python-multipart
 langchain_community
 langchain
 pypdf
+groq

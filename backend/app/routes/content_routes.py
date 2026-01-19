@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Form, UploadFile, File
+from fastapi import APIRouter, Form, UploadFile, File, HTTPException
 from app.controllers.content_controller import ContentController
+from wikipedia.exceptions import DisambiguationError, PageError
 
 router = APIRouter(prefix="/ingest", tags=["Ingestion"])
 
@@ -9,10 +10,24 @@ controller = ContentController()
 # Endpoint Wikipedia
 @router.post("/wikipedia")
 def ingest_wikipedia(url: str = Form(...), sentences: int = 0):
-    title = controller.extract_wikipedia_title(url)
 
-    content = controller.get_wikipedia_content(title, sentences)
+    # Get Article Title 
+    try:
+        title = controller.extract_wikipedia_title(url)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
+
+    # Get Article Content
+    try:
+        content = controller.get_wikipedia_content(title)
+    except DisambiguationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except PageError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    
+
+    # Get Sections
     section = controller.split_wikipedia_sections(content)
 
     return {"sections": section}
