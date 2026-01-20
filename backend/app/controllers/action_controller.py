@@ -12,12 +12,12 @@ GEMINI_API_KEY = settings.gemini_api_key
 
 SUMMARY_CONFIG = {
     "court": {
-        "max_tokens": 80,
-        "sentences": "1 à 2 phrases",
-    },
-    "moyen": {
         "max_tokens": 150,
         "sentences": "3 à 4 phrases",
+    },
+    "moyen": {
+        "max_tokens": 250,
+        "sentences": "5 à 6 phrases",
     },
 }
 
@@ -30,9 +30,11 @@ class ActionController:
             
 
 
-    def summarize_section(self, subject, title, text: str, format: SummaryFormat) -> str:
+    def summarize_section(self, text: str, format: SummaryFormat) -> str:
 
         cfg = SUMMARY_CONFIG[format]
+
+        text = text[:40000]
 
         response = self.client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -49,8 +51,6 @@ class ActionController:
                 {
                     "role": "user",
                     "content": (
-                        f"Contexte global : article Wikipédia sur: {subject}.\n\n"
-                        f"Section : {title}\n\n"
                         "Consignes :\n"
                         f"- Résumé {format.value}\n"
                         f"- {cfg['sentences']}\n"
@@ -65,22 +65,10 @@ class ActionController:
         
         # Retourne le texte du résumé
         return response.choices[0].message.content.strip()
-    
 
 
-    def summarize_sections(self, subject, format, sections: dict):
 
-        summaries = {}
-
-        for title, text in sections.items():
-            summary = self.summarize_section(subject, title, text, format)
-            summaries[title] = summary
-
-        return summaries
-    
-
-
-    def generate_qcm(self, text: str, n_questions: int = 5):
+    def generate_qcm(self, text: str, n_questions: int):
 
         prompt = (
             "Tu es un générateur de QCM.\n"
@@ -113,19 +101,27 @@ class ActionController:
     
 
 
-    def generate_qcm_from_sections(
-        self,
-        sections: dict[str, str],
-        n_questions_per_section: int
-    ) -> dict:
+    def translate_text(self, text: str, lang: str):
 
-        qcms = {}
+        prompt = (
+            "Tu es un traducteur professionnel.\n\n"
+            "Tâche :\n"
+            f"Traduire le texte ci-dessous vers {lang}.\n\n"
 
-        # for title, content in sections.items():
-        #     qcms[title] = self.generate_qcm(
-        #         text=content,
-        #         n_questions=n_questions_per_section
-        #     )
+            "Contraintes :\n"
+            "- Respecter fidèlement le sens original.\n"
+            "- Utiliser un langage clair, naturel et fluide.\n"
+            "- Ne pas ajouter, supprimer ou interpréter des informations.\n"
+            "- Conserver les termes techniques (ou les traduire correctement si un équivalent standard existe).\n"
+            "- Ne produire que la traduction, sans commentaires.\n\n"
 
-        return qcms
-    
+            "Texte à traduire :\n\n"
+            f"{text}"
+        )
+
+        response = self.gemini.models.generate_content(
+            model="gemini-flash-latest",
+            contents=prompt
+        )
+
+        return response.text
