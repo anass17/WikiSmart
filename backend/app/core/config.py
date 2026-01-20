@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
-    api_key: str
+    groq_api_key: str
+    gemini_api_key: str
 
     model_config = SettingsConfigDict(
         env_file="../.env",

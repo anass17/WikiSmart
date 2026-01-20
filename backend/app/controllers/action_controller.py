@@ -1,8 +1,13 @@
 from app.core.config import settings
 from groq import Groq
+from google import genai
 from app.schemas.summary_format import SummaryFormat
+import json
 
-API_KEY = settings.api_key
+
+
+GROG_API_KEY = settings.groq_api_key
+GEMINI_API_KEY = settings.gemini_api_key
 
 
 SUMMARY_CONFIG = {
@@ -20,7 +25,8 @@ SUMMARY_CONFIG = {
 class ActionController:
         
     def __init__(self):
-        self.client = Groq(api_key=API_KEY)
+        self.client = Groq(api_key=GROG_API_KEY)
+        self.gemini = genai.Client(api_key=GEMINI_API_KEY)
             
 
 
@@ -71,3 +77,55 @@ class ActionController:
             summaries[title] = summary
 
         return summaries
+    
+
+
+    def generate_qcm(self, text: str, n_questions: int = 5):
+
+        prompt = (
+            "Tu es un générateur de QCM.\n"
+            "Génère UNIQUEMENT un JSON valide, sans texte, sans explication, sans markdown.\n\n"
+            "Structure attendue :\n"
+            "[\n"
+            "  {\n"
+            "    \"question\": \"\",\n"
+            "    \"options\": [\"\", \"\", \"\", \"\"],\n"
+            "    \"answer\": \"\"\n"
+            "  }\n"
+            "]\n\n"
+            f"Texte source :\n{text}\n\n"
+            f"Nombre de questions : {n_questions}\n"
+            "Contraintes : 1 seule bonne réponse et 3 distracteurs par question."
+        )
+
+        response = self.gemini.models.generate_content(
+            model="gemini-flash-latest",
+            contents=prompt
+        )
+        
+        # On suppose que Gemini renvoie du JSON
+        try:
+            qcms = json.loads(response.text)
+        except Exception:
+            # fallback : texte brut
+            qcms = [{"question": response.text, "options": [], "answer": ""}]
+        return qcms
+    
+
+
+    def generate_qcm_from_sections(
+        self,
+        sections: dict[str, str],
+        n_questions_per_section: int
+    ) -> dict:
+
+        qcms = {}
+
+        for title, content in sections.items():
+            qcms[title] = self.generate_qcm(
+                text=content,
+                n_questions=n_questions_per_section
+            )
+
+        return qcms
+    
