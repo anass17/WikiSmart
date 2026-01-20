@@ -1,5 +1,12 @@
 from pydantic import BaseModel, Field
+from typing import Literal, Optional
 from app.schemas.summary_format import SummaryFormat
+
+
+class IngestWikipediaRequest(BaseModel):
+    ressource: str
+    method: Literal["url", "keyword"]
+    lang: Optional[str] = "fr"
 
 
 class SummerizeRequest(BaseModel):

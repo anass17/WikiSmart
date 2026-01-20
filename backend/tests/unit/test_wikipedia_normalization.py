@@ -1,7 +1,7 @@
 import pytest
-from app.controllers.content_controller import ContentController
+from app.controllers.ingestion_controller import IngestionController
 
-controller = ContentController()
+controller = IngestionController()
 
 def test_normalize_wikipedia_title_valid():
     url = "https://fr.wikipedia.org/wiki/Machine_Learning"

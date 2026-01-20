@@ -24,9 +24,9 @@ SUMMARY_CONFIG = {
 
 class ActionController:
         
-    def __init__(self):
-        self.client = Groq(api_key=GROG_API_KEY)
-        self.gemini = genai.Client(api_key=GEMINI_API_KEY)
+    def __init__(self, groq_client = None, gemini_client = None):
+        self.client = groq_client if groq_client else Groq(api_key=GROG_API_KEY)
+        self.gemini = gemini_client if gemini_client else genai.Client(api_key=GEMINI_API_KEY)
             
 
 
@@ -121,11 +121,11 @@ class ActionController:
 
         qcms = {}
 
-        for title, content in sections.items():
-            qcms[title] = self.generate_qcm(
-                text=content,
-                n_questions=n_questions_per_section
-            )
+        # for title, content in sections.items():
+        #     qcms[title] = self.generate_qcm(
+        #         text=content,
+        #         n_questions=n_questions_per_section
+        #     )
 
         return qcms
     

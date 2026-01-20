@@ -1,7 +1,7 @@
-from app.controllers.content_controller import ContentController
+from app.controllers.ingestion_controller import IngestionController
 
 def test_split_multiple_sections():
-    controller = ContentController()
+    controller = IngestionController()
 
     content = """
     === Introduction ===
@@ -25,7 +25,7 @@ def test_split_multiple_sections():
 
 
 def test_split_with_text_before_first_section():
-    controller = ContentController()
+    controller = IngestionController()
 
     content = """
     Python est un langage populaire.
@@ -42,7 +42,7 @@ def test_split_with_text_before_first_section():
 
 
 def test_split_without_sections():
-    controller = ContentController()
+    controller = IngestionController()
 
     content = "Python est un langage de programmation."
 
@@ -55,7 +55,7 @@ def test_split_without_sections():
 
 
 def test_split_empty_section_content():
-    controller = ContentController()
+    controller = IngestionController()
 
     content = """
     === Introduction ===
