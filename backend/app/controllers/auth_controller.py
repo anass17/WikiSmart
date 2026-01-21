@@ -19,7 +19,12 @@ class AuthController:
         user = self.model.create_user(first_name, last_name, email, hash_password(password))
 
         token = create_access_token({"sub": str(user.id)})
-        return token
+
+        return {
+            "access_token": token,
+            "first_name": first_name,
+            "last_name": last_name,
+        }
 
 
     
@@ -33,4 +38,8 @@ class AuthController:
             return None
 
         token = create_access_token({"sub": str(user.id)})
-        return token
+        return {
+            "access_token": token,
+            "first_name": user.first_name,
+            "last_name": user.last_name
+        }

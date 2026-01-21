@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.controllers.auth_controller import AuthController
 from app.db.deps import get_db
 from sqlalchemy.orm import Session
-from app.schemas.auth_schema import TokenResponse, RegisterRequest
+from app.schemas.auth_schema import AuthResponse, RegisterRequest, LoginRequest
 
 
 router = APIRouter(prefix='/auth', tags=['Auth'])
@@ -12,7 +12,7 @@ router = APIRouter(prefix='/auth', tags=['Auth'])
 
 # Register Endpoint
 
-@router.post("/register", response_model=TokenResponse, status_code=201)
+@router.post("/register", response_model=AuthResponse, status_code=201)
 def register(
     data: RegisterRequest,
     db: Session = Depends(get_db)
@@ -31,24 +31,24 @@ def register(
             detail="User already exists"
         )
 
-    return {"access_token": token}
+    return token
 
 
 
 # Login Endpoint
 
-@router.post('/login', response_model=TokenResponse)
+@router.post('/login', response_model=AuthResponse)
 def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    form_data: LoginRequest,
     db: Session = Depends(get_db)
 ):
     controller = AuthController(db)
     token = controller.authenticate_user(
-        email=form_data.username,
+        email=form_data.email,
         password=form_data.password
     )
 
     if not token:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    return {"access_token": token}
+    return token
