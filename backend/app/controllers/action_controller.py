@@ -125,3 +125,30 @@ class ActionController:
         )
 
         return response.text
+    
+
+
+    # def get_score(self, answers: dict[a], lang: str):
+
+    #     prompt = (
+    #         "Tu es un traducteur professionnel.\n\n"
+    #         "Tâche :\n"
+    #         f"Traduire le texte ci-dessous vers {lang}.\n\n"
+
+    #         "Contraintes :\n"
+    #         "- Respecter fidèlement le sens original.\n"
+    #         "- Utiliser un langage clair, naturel et fluide.\n"
+    #         "- Ne pas ajouter, supprimer ou interpréter des informations.\n"
+    #         "- Conserver les termes techniques (ou les traduire correctement si un équivalent standard existe).\n"
+    #         "- Ne produire que la traduction, sans commentaires.\n\n"
+
+    #         "Texte à traduire :\n\n"
+    #         f"{text}"
+    #     )
+
+    #     response = self.gemini.models.generate_content(
+    #         model="gemini-flash-latest",
+    #         contents=prompt
+    #     )
+
+    #     return response.text

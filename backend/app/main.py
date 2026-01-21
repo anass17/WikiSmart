@@ -6,6 +6,7 @@ from app.routes.health import router as health_router
 from app.routes.auth_routes import router as auth_router
 from app.routes.ingestion_routes import router as ingestion_router
 from app.routes.action_routes import router as action_router
+import app.db.models
 
 
 
