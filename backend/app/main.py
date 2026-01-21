@@ -8,6 +8,12 @@ from app.routes.ingestion_routes import router as ingestion_router
 from app.routes.action_routes import router as action_router
 import app.db.models
 
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "http://localhost:3000",   # dev on host
+    "http://frontend:3000",    # frontend container
+]
 
 
 @asynccontextmanager
@@ -21,6 +27,14 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 
 app.include_router(health_router)
