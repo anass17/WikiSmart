@@ -3,8 +3,8 @@ import RegisterForm from "../components/RegisterForm"
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Login Page" },
-    { name: "description", content: "Login Page" },
+    { title: "Register Page" },
+    { name: "description", content: "Register Page" },
   ];
 }
 

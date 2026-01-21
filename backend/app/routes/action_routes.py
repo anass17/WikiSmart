@@ -12,16 +12,16 @@ action_controller = ActionController()
 @router.post("/summarize")
 def get_summarized_text(payload: SummerizeRequest):
     summary = action_controller.summarize_section(payload.text, payload.format)
-    return {"summary": summary}
+    return {"text": summary}
 
 
 
-@router.post("/qcm")
-def generate_qcm(
+@router.post("/quiz")
+def generate_quiz(
     payload: QCMRequest
 ):
-    qcm_list = action_controller.generate_qcm(payload.text, payload.n_questions)
-    return {"qcms": qcm_list}
+    qcm_list = action_controller.generate_quiz(payload.text, payload.n_questions)
+    return {"quiz": qcm_list}
 
 
 

@@ -68,7 +68,7 @@ class ActionController:
 
 
 
-    def generate_qcm(self, text: str, n_questions: int):
+    def generate_quiz(self, text: str, n_questions: int):
 
         prompt = (
             "Tu es un générateur de QCM.\n"
