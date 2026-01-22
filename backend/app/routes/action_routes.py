@@ -24,10 +24,12 @@ def get_summarized_text(
 @router.post("/quiz")
 def generate_quiz(
     payload: QCMRequest,
-    db = Depends(get_db)
+    db = Depends(get_db),
+    user_id = Depends(get_current_user)
 ):
+    
     controller = ActionController(db)
-    qcm_list = controller.generate_quiz(payload.article_id, payload.n_questions)
+    qcm_list = controller.generate_quiz(payload.article_id, payload.n_questions, user_id)
     return {"quiz": qcm_list}
 
 

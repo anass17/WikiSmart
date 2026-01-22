@@ -80,7 +80,7 @@ class ActionController:
 
 
 
-    def generate_quiz(self, article_id: int, n_questions: int):
+    def generate_quiz(self, article_id: int, n_questions: int, user_id: int):
 
         article = self.article_model.get_article_by_id(article_id)
         if (not article):
@@ -108,6 +108,8 @@ class ActionController:
             model="gemini-flash-latest",
             contents=prompt
         )
+
+        self.model.create_action(user_id, article.id, "QCM", str(n_questions))
         
         # On suppose que Gemini renvoie du JSON
         try:

@@ -20,6 +20,8 @@ const ActionsPage: React.FC = () => {
   const [actionResult, setActionResult] = useState<string>("");
   const [actionLoading, setActionLoading] = useState<boolean>(false);
   const [actionError, setActionError] = useState<string>("");
+  const [actionQCM, setActionQCM] = useState<any>(null)
+  const [QCMAnswers, setQCMAnswers] = useState<any>([])
 
   // Handlers
   const handleIngest = async (e: any) => {
@@ -112,12 +114,16 @@ const ActionsPage: React.FC = () => {
 
     if (request.status == 200) {
 
+      setActionError("")
+
       if (actionOption != "quiz") {
         setActionResult(response.text)
-        setActionError("")
+      } else {
+        setActionQCM(response.quiz)
+        console.log(response.quiz)
       }
 
-    } else if (request.status == 400 || request.status == 401) {
+    } else if (request.status == 400 || request.status == 401 || request.status == 404) {
 
       setActionError(response.detail)
 
@@ -127,11 +133,21 @@ const ActionsPage: React.FC = () => {
     
     }
 
-    console.log(response)
-
     setActionLoading(false)
 
   };
+
+
+  const setQuizAnswer = (id: number, answer: string) => {
+
+    let answers = QCMAnswers
+
+    answers[id] = answer
+
+    setQCMAnswers(answers)
+
+    console.log(answers)
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -437,10 +453,33 @@ const ActionsPage: React.FC = () => {
             </div>
 
             {/* Action result */}
-            {actionResult && (
+            {actionResult && actionOption != "quiz" && (
               <div className="mt-4 p-4 bg-white max-h-100 overflow-auto border rounded shadow">
                 <h3 className="font-semibold mb-2">Result</h3>
                 <p>{actionResult}</p>
+              </div>
+            )}
+
+            {actionQCM && (
+              <div className="mt-4 p-4 bg-white border rounded shadow">
+                <h3 className="font-semibold mb-5">Quiz</h3>
+                {
+                  actionQCM.map((item: any, index: number) => {
+                    return (
+                      <div>
+                        <h4 className="font-bold text-sm mb-2" key={'q-' + index}>{index + 1}. {item.question}</h4>
+                        <div className="grid grid-cols-4 gap-3 mb-5">
+                          <p className={`p-3 border border-gray-300 rounded cursor-pointer hover:shadow-md transition-all hover:border-blue-500 hover:text-blue-500 ${item.options[0] == QCMAnswers[index] ? "text-blue-500 border-blue-100 bg-blue-50" : ""}`} onClick={() => {setQuizAnswer(index, item.options[0])}}>A. {item.options[0]}</p>
+                          <p className={`p-3 border border-gray-300 rounded cursor-pointer hover:shadow-md transition-all hover:border-blue-500 hover:text-blue-500 ${item.options[1] == QCMAnswers[index] ? "text-blue-500 border-blue-100 bg-blue-50" : ""}`} onClick={() => {setQuizAnswer(index, item.options[1])}}>B. {item.options[1]}</p>
+                          <p className={`p-3 border border-gray-300 rounded cursor-pointer hover:shadow-md transition-all hover:border-blue-500 hover:text-blue-500 ${item.options[2] == QCMAnswers[index] ? "text-blue-500 border-blue-100 bg-blue-50" : ""}`} onClick={() => {setQuizAnswer(index, item.options[2])}}>C. {item.options[2]}</p>
+                          <p className={`p-3 border border-gray-300 rounded cursor-pointer hover:shadow-md transition-all hover:border-blue-500 hover:text-blue-500 ${item.options[3] == QCMAnswers[index] ? "text-blue-500 border-blue-100 bg-blue-50" : ""}`} onClick={() => {setQuizAnswer(index, item.options[3])}}>D. {item.options[3]}</p>
+                        </div>
+                      </div>
+                    )
+                  })
+                  
+                }
+                <button className="bg-blue-900 cursor-pointer text-white px-4 py-2 rounded hover:bg-blue-800">Submit</button>
               </div>
             )}
           </section>
