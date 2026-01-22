@@ -4,34 +4,44 @@ from pypdf import PdfReader
 from fastapi import UploadFile, HTTPException
 from wikipedia.exceptions import DisambiguationError, PageError
 from urllib.parse import urlparse, unquote
+from sqlalchemy.orm import Session
+from app.models.article_model import ArticleModel
 import re
 
 
 class IngestionController:
     def __init__(
         self,
+        db: Session,
         user_agent: str = "WikiSmart/1.0 (contact: email@example.com)",
     ):
-        """
-        Initialise la session Wikipedia avec un User-Agent et la langue.
-        """
+        
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": user_agent})
+        self.model = ArticleModel(db)
         wikipedia.requests = self.session
 
 
 
-    def get_wikipedia_article(self, ressource, method, lang):
+    def get_wikipedia_article(self, ressource: str, method, lang):
         
         if method == 'url':
+            url = ressource
             try:
-                topic = self.extract_wikipedia_title(ressource)
+                lang, topic = self.extract_wikipedia_title(ressource)
             except ValueError as e:
                 raise HTTPException(status_code=400, detail=str(e))
         else:
             topic = ressource
+            url = f"https://{lang}.wikipedia.org/wiki/{topic.replace(' ', '_')}"
 
         wikipedia.set_lang(lang)
+
+        # Check if article already exist
+
+        article = self.check_article_existance(url, topic)
+        if article:
+            return article.content
 
         try:
             content = self.get_wikipedia_content(topic)
@@ -41,6 +51,10 @@ class IngestionController:
             raise HTTPException(status_code=404, detail=str(e))
         
         content = self.clean_wikipedia_content(content)
+
+        # Save article
+
+        self.model.create_article(url, topic, content)
 
         return content
 
@@ -61,7 +75,9 @@ class IngestionController:
 
         title = title.replace('_', ' ')
 
-        return unquote(title)
+        lang = parsed_url.netloc.replace(".wikipedia.org", '')
+
+        return [lang, unquote(title)]
     
 
 
@@ -98,6 +114,11 @@ class IngestionController:
         texte = texte.strip()
 
         return texte
+    
+
+
+    def check_article_existance(self, url, topic):
+        return self.model.get_article(url, topic)
 
 
 

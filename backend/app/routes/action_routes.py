@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Form
+from fastapi import APIRouter
 from app.controllers.action_controller import ActionController
 from app.schemas.content_schema import SummerizeRequest, QCMRequest, TranslateRequest
 

@@ -47,6 +47,7 @@ const ActionsPage: React.FC = () => {
     if (request.status == 200) {
 
       setIngestedContent(response.content)
+      setIngestError("")
 
     } else if (request.status == 400) {
 
@@ -110,6 +111,7 @@ const ActionsPage: React.FC = () => {
 
       if (actionOption != "quiz") {
         setActionResult(response.text)
+        setActionError("")
       }
 
     } else if (request.status == 400) {
