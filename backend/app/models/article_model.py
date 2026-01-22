@@ -27,3 +27,8 @@ class ArticleModel:
         return self.db.query(Article).where(
             (Article.url == url) & (Article.title == topic)
         ).first()
+    
+
+
+    def get_article_by_id(self, id):
+        return self.db.query(Article).where(Article.id == id).first()

@@ -10,20 +10,20 @@ class IngestWikipediaRequest(BaseModel):
 
 
 class SummerizeRequest(BaseModel):
-    text: str
+    article_id: int
     format: SummaryFormat
 
 
 class QCMRequest(BaseModel):
-    text: str
+    article_id: int
     n_questions: int = Field(
         ...,
-        ge=1,
-        le=10,
-        description="Nombre de questions (entre 1 et 10)"
+        ge=5,
+        le=15,
+        description="Nombre de questions (entre 5 et 15)"
     )
 
 
 class TranslateRequest(BaseModel):
-    text: str
-    lang: Literal["French", "English", "Espanol", "Arabic"]
+    article_id: int
+    lang: Literal["French", "English", "Spanish", "Arabic"]

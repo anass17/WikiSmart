@@ -24,6 +24,8 @@ class IngestionController:
 
 
     def get_wikipedia_article(self, ressource: str, method, lang):
+
+        ressource = ressource.lower()
         
         if method == 'url':
             url = ressource
@@ -41,7 +43,7 @@ class IngestionController:
 
         article = self.check_article_existance(url, topic)
         if article:
-            return article.content
+            return article
 
         try:
             content = self.get_wikipedia_content(topic)
@@ -54,9 +56,9 @@ class IngestionController:
 
         # Save article
 
-        self.model.create_article(url, topic, content)
+        article = self.model.create_article(url, topic, content)
 
-        return content
+        return article
 
 
 

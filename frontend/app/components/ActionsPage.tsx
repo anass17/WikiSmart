@@ -10,6 +10,7 @@ const ActionsPage: React.FC = () => {
   const [ingestOption, setIngestOption] = useState<"url" | "keyword" | "pdf">("url");
   const [articleInput, setArticleInput] = useState<string | null>("");
   const [ingestedContent, setIngestedContent] = useState<string>("");
+  const [ingestedContentId, setIngestedContentId] = useState<number | null>(null);
   const [ingestLoading, setIngestLoading] = useState<boolean>(false);
   const [ingestError, setIngestError] = useState<string>("");
 
@@ -47,6 +48,7 @@ const ActionsPage: React.FC = () => {
     if (request.status == 200) {
 
       setIngestedContent(response.content)
+      setIngestedContentId(response.id)
       setIngestError("")
 
     } else if (request.status == 400) {
@@ -77,21 +79,21 @@ const ActionsPage: React.FC = () => {
     if (actionOption == "summarize") {
     
       data = {
-        "text": ingestedContent,
+        "article_id": ingestedContentId,
         "format": actionSubOption
       }
     
     } else if (actionOption == "translate") {
 
       data = {
-        "text": ingestedContent,
+        "article_id": ingestedContentId,
         "lang": actionSubOption
       }
 
     } else {
 
       data = {
-        "text": ingestedContent,
+        "article_id": ingestedContentId,
         "n_questions": actionSubOption
       }
 
@@ -100,7 +102,8 @@ const ActionsPage: React.FC = () => {
     const request = await fetch(`${API_URL}/action/${actionOption}`, {
       method: 'POST',
       headers: {
-         "content-type": "application/json"
+         "content-type": "application/json",
+         "Authorization": "Bearer " + localStorage.getItem("access_token")
       },
       body: JSON.stringify(data)
     })
@@ -114,7 +117,7 @@ const ActionsPage: React.FC = () => {
         setActionError("")
       }
 
-    } else if (request.status == 400) {
+    } else if (request.status == 400 || request.status == 401) {
 
       setActionError(response.detail)
 
@@ -254,9 +257,9 @@ const ActionsPage: React.FC = () => {
             <div className="space-y-4">
 
               {
-                ingestError && (
-                  <p className="w-full bg-red-200 text-slate-700 font-semibold px-8 py-5 rounded-md border-red-500 mb-5 -mt-5 text-center">
-                    {ingestError}
+                actionError && (
+                  <p className="w-full bg-red-200 text-slate-700 font-semibold px-8 py-5 rounded-md border-red-500 mb-5 text-center">
+                    {actionError}
                   </p>
                 )
               }
@@ -435,7 +438,7 @@ const ActionsPage: React.FC = () => {
 
             {/* Action result */}
             {actionResult && (
-              <div className="mt-4 p-4 bg-white border rounded shadow">
+              <div className="mt-4 p-4 bg-white max-h-100 overflow-auto border rounded shadow">
                 <h3 className="font-semibold mb-2">Result</h3>
                 <p>{actionResult}</p>
               </div>

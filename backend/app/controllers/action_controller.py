@@ -1,7 +1,10 @@
+from fastapi import HTTPException
 from app.core.config import settings
 from groq import Groq
 from google import genai
 from app.schemas.summary_format import SummaryFormat
+from app.models.action_model import ActionModel
+from app.models.article_model import ArticleModel
 import json
 
 
@@ -24,17 +27,23 @@ SUMMARY_CONFIG = {
 
 class ActionController:
         
-    def __init__(self, groq_client = None, gemini_client = None):
+    def __init__(self, db, groq_client = None, gemini_client = None):
         self.client = groq_client if groq_client else Groq(api_key=GROG_API_KEY)
         self.gemini = gemini_client if gemini_client else genai.Client(api_key=GEMINI_API_KEY)
+        self.model = ActionModel(db)
+        self.article_model = ArticleModel(db)
             
 
 
-    def summarize_section(self, text: str, format: SummaryFormat) -> str:
+    def summarize_section(self, article_id: int, format: SummaryFormat, user_id: int) -> str:
+
+        article = self.article_model.get_article_by_id(article_id)
+        if (not article):
+            raise HTTPException(status_code=404, detail="Article Not Found")
 
         cfg = SUMMARY_CONFIG[format]
 
-        text = text[:40000]
+        text = article.content[:40000]
 
         response = self.client.chat.completions.create(
             model="llama-3.3-70b-versatile",
@@ -62,13 +71,22 @@ class ActionController:
                 },
             ],
         )
+
+        response = response.choices[0].message.content.strip()
+
+        self.model.create_action(user_id, article.id, "SUMMERIZE", format.value)
         
-        # Retourne le texte du résumé
-        return response.choices[0].message.content.strip()
+        return response
 
 
 
-    def generate_quiz(self, text: str, n_questions: int):
+    def generate_quiz(self, article_id: int, n_questions: int):
+
+        article = self.article_model.get_article_by_id(article_id)
+        if (not article):
+            raise HTTPException(status_code=404, detail="Article Not Found")
+        
+        text = article.content
 
         prompt = (
             "Tu es un générateur de QCM.\n"
@@ -101,7 +119,13 @@ class ActionController:
     
 
 
-    def translate_text(self, text: str, lang: str):
+    def translate_text(self, article_id: int, lang: str, user_id: int):
+
+        article = self.article_model.get_article_by_id(article_id)
+        if (not article):
+            raise HTTPException(status_code=404, detail="Article Not Found")
+        
+        text = article.content
 
         prompt = (
             "Tu es un traducteur professionnel.\n\n"
@@ -124,8 +148,12 @@ class ActionController:
             contents=prompt
         )
 
-        return response.text
-    
+        content = response.text
+
+        self.model.create_action(user_id, article.id, "TRANSLATE", lang)
+
+        return content
+        
 
 
     # def get_score(self, answers: dict[a], lang: str):

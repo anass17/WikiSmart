@@ -16,9 +16,9 @@ def ingest_wikipedia(
 ):
 
     controller = IngestionController(db)
-    content = controller.get_wikipedia_article(payload.ressource, payload.method, payload.lang)
+    article = controller.get_wikipedia_article(payload.ressource, payload.method, payload.lang)
 
-    return {"content": content}
+    return article
 
 
 
