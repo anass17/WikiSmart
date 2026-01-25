@@ -120,7 +120,7 @@ class ActionController:
             # fallback : texte brut
             qcms = [{"question": response.text, "options": [], "answer": ""}]
     
-        quiz = self.quiz_model.create_quiz(action.id, response.text)
+        quiz = self.quiz_model.create_quiz(action.id, qcms)
 
         return {
             "quiz_id": quiz.id,
@@ -172,7 +172,7 @@ class ActionController:
         if (not quiz):
             raise HTTPException(status_code=404, detail="Quiz Not Found")
 
-        quiz_content = json.loads(quiz.content)
+        quiz_content = quiz.content
 
         score = 0
 
@@ -180,7 +180,7 @@ class ActionController:
             if (item["answer"] == answers[index]):
                 score += 1
 
-        self.quiz_model.create_quiz_attempt(quiz_id, score, json.dumps(answers))
+        self.quiz_model.create_quiz_attempt(quiz_id, score, answers)
 
         return {
             "user_id": user_id,

@@ -1,4 +1,5 @@
-from app.db.models import Quiz, QuizAttempt
+from app.db.models import Quiz, QuizAttempt, Action, Article
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 
@@ -39,3 +40,29 @@ class QuizModel:
         self.db.refresh(quiz_attempt)
 
         return quiz_attempt
+    
+    
+
+    def get_user_quizzes(self, user_id):
+        return (
+            self.db.query(
+                Quiz.id.label("id"),
+                Quiz.submitted_at.label("submitted_at"),
+                Article.title.label("title"),
+                Action.option.label("questions_count"),
+                func.max(QuizAttempt.score).label("best_score"),
+                func.max(QuizAttempt.submitted_at).label("last_attempt")
+            )
+            .outerjoin(Action, Quiz.action_id == Action.id)
+            .outerjoin(Article, Article.id == Action.article_id)
+            .outerjoin(QuizAttempt, QuizAttempt.quiz_id == Quiz.id)
+            .filter(Action.user_id == user_id)
+            .group_by(
+                Quiz.id,
+                Quiz.submitted_at,
+                Article.title,
+                Action.option
+            )
+            .all()
+        )
+
