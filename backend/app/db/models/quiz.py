@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, Float, TIMESTAMP, func
+from sqlalchemy import Column, Integer, ForeignKey, JSON, TIMESTAMP, func
 from app.db.base import Base
 
 class Quiz(Base):
@@ -6,5 +6,5 @@ class Quiz(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     action_id = Column(Integer, ForeignKey("actions.id"), nullable=False)
-    score = Column(Float, nullable=False)
+    content = Column(JSON, nullable=False)
     submitted_at = Column(TIMESTAMP, server_default=func.now())

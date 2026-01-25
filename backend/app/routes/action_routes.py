@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from app.controllers.action_controller import ActionController
-from app.schemas.content_schema import SummerizeRequest, QCMRequest, TranslateRequest
+from app.schemas.content_schema import SummerizeRequest, QCMRequest, TranslateRequest, QuizScoreRequest
 from app.db.deps import get_db
 from app.core.deps import get_current_user
 
@@ -27,10 +27,9 @@ def generate_quiz(
     db = Depends(get_db),
     user_id = Depends(get_current_user)
 ):
-    
     controller = ActionController(db)
-    qcm_list = controller.generate_quiz(payload.article_id, payload.n_questions, user_id)
-    return {"quiz": qcm_list}
+    result = controller.generate_quiz(payload.article_id, payload.n_questions, user_id)
+    return result
 
 
 
@@ -43,3 +42,17 @@ def translate_text(
     controller = ActionController(db)
     translated_text = controller.translate_text(payload.article_id, payload.lang, user_id)
     return {"text": translated_text}
+
+
+
+@router.post("/quiz/score")
+def translate_text(
+    payload: QuizScoreRequest,
+    db = Depends(get_db),
+    user_id = Depends(get_current_user)
+):
+    controller = ActionController(db)
+    result = controller.get_score(payload.quiz_id, payload.answers, user_id)
+
+    return result
+        

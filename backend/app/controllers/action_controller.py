@@ -4,6 +4,7 @@ from groq import Groq
 from google import genai
 from app.schemas.summary_format import SummaryFormat
 from app.models.action_model import ActionModel
+from app.models.quiz_model import QuizModel
 from app.models.article_model import ArticleModel
 import json
 
@@ -32,6 +33,7 @@ class ActionController:
         self.gemini = gemini_client if gemini_client else genai.Client(api_key=GEMINI_API_KEY)
         self.model = ActionModel(db)
         self.article_model = ArticleModel(db)
+        self.quiz_model = QuizModel(db)
             
 
 
@@ -109,15 +111,21 @@ class ActionController:
             contents=prompt
         )
 
-        self.model.create_action(user_id, article.id, "QCM", str(n_questions))
+
+        action = self.model.create_action(user_id, article.id, "QCM", str(n_questions))
         
-        # On suppose que Gemini renvoie du JSON
         try:
             qcms = json.loads(response.text)
         except Exception:
             # fallback : texte brut
             qcms = [{"question": response.text, "options": [], "answer": ""}]
-        return qcms
+    
+        quiz = self.quiz_model.create_quiz(action.id, response.text)
+
+        return {
+            "quiz_id": quiz.id,
+            "quiz": qcms
+        }
     
 
 
@@ -158,27 +166,25 @@ class ActionController:
         
 
 
-    # def get_score(self, answers: dict[a], lang: str):
+    def get_score(self, quiz_id: int, answers: list[str], user_id: int):
 
-    #     prompt = (
-    #         "Tu es un traducteur professionnel.\n\n"
-    #         "Tâche :\n"
-    #         f"Traduire le texte ci-dessous vers {lang}.\n\n"
+        quiz = self.quiz_model.get_quiz_by_id(quiz_id)
+        if (not quiz):
+            raise HTTPException(status_code=404, detail="Quiz Not Found")
 
-    #         "Contraintes :\n"
-    #         "- Respecter fidèlement le sens original.\n"
-    #         "- Utiliser un langage clair, naturel et fluide.\n"
-    #         "- Ne pas ajouter, supprimer ou interpréter des informations.\n"
-    #         "- Conserver les termes techniques (ou les traduire correctement si un équivalent standard existe).\n"
-    #         "- Ne produire que la traduction, sans commentaires.\n\n"
+        quiz_content = json.loads(quiz.content)
 
-    #         "Texte à traduire :\n\n"
-    #         f"{text}"
-    #     )
+        score = 0
 
-    #     response = self.gemini.models.generate_content(
-    #         model="gemini-flash-latest",
-    #         contents=prompt
-    #     )
+        for index, item in enumerate(quiz_content):
+            if (item["answer"] == answers[index]):
+                score += 1
 
-    #     return response.text
+        self.quiz_model.create_quiz_attempt(quiz_id, score, json.dumps(answers))
+
+        return {
+            "user_id": user_id,
+            "answers": [item["answer"] for item in quiz_content],
+            "score": score,
+            "total": len(quiz_content)
+        }

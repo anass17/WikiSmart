@@ -27,3 +27,8 @@ class QCMRequest(BaseModel):
 class TranslateRequest(BaseModel):
     article_id: int
     lang: Literal["French", "English", "Spanish", "Arabic"]
+
+
+class QuizScoreRequest(BaseModel):
+    quiz_id: int
+    answers: list
