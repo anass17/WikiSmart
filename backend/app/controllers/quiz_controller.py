@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from app.models.quiz_model import QuizModel
 
 
@@ -14,3 +15,28 @@ class QuizController:
         rows = self.model.get_user_quizzes(user_id)
 
         return [dict(r._mapping) for r in rows]
+    
+
+
+    def get_quiz_attempts(self, user_id, quiz_id):
+        quiz = self.model.get_quiz_by_id(user_id, quiz_id)
+
+        if not quiz:
+            raise HTTPException(status_code=404, detail="Article Not Found")
+        
+        attempts = self.model.get_quiz_attempts(quiz_id)
+
+        return {
+            "attempts": attempts 
+        }
+    
+
+
+
+    def get_quiz_details(self, user_id, quiz_id):
+        quiz = self.model.get_quiz_by_id(user_id, quiz_id)
+
+        if not quiz:
+            raise HTTPException(status_code=404, detail="Article Not Found")
+        
+        return dict(quiz._mapping)

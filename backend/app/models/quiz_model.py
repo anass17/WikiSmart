@@ -65,4 +65,44 @@ class QuizModel:
             )
             .all()
         )
+    
 
+    def get_quiz_by_id(self, user_id, quiz_id):
+        quiz = (
+            self.db.query(
+                Quiz.id.label("id"),
+                Quiz.submitted_at.label("submitted_at"),
+                Quiz.content,
+                Article.title.label("title"),
+                Action.option.label("questions_count"),
+                func.max(QuizAttempt.score).label("best_score"),
+                func.max(QuizAttempt.submitted_at).label("last_attempt")
+            )
+            .outerjoin(Action, Quiz.action_id == Action.id)
+            .outerjoin(Article, Article.id == Action.article_id)
+            .outerjoin(QuizAttempt, QuizAttempt.quiz_id == Quiz.id)
+            .filter(Action.user_id == user_id)
+            .filter(Quiz.id == quiz_id)
+            .group_by(
+                Quiz.id,
+                Quiz.submitted_at,
+                Article.title,
+                Action.option
+            )
+            .first()
+        )
+
+        return quiz
+
+
+
+    def get_quiz_attempts(self, quiz_id):
+        attempts = (
+            self.db.query(
+                QuizAttempt
+            ).where(QuizAttempt.quiz_id == quiz_id)
+            .order_by(QuizAttempt.submitted_at.desc())
+            .all()
+        )
+
+        return attempts

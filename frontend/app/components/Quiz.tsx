@@ -83,8 +83,10 @@ const Quiz : React.FC<QuizParams> = ({quizId, actionQCM} : QuizParams) => {
             }
 
             {
-                quizResult.score && (
-                    <div className="h-16 w-16 mx-auto rounded-full border-4 mb-10 border-slate-500 flex justify-center items-center">
+                quizResult.score !== null && (
+                    <div className={`h-16 w-16 mx-auto rounded-full border-4 mb-10 
+                        border-${quizResult.score == 0 ? "red" : (quizResult.score == quizResult.total ? "green" : "yellow")}-500 
+                        flex justify-center items-center`}>
                         {quizResult.score} / {quizResult.total}
                     </div>
                 )

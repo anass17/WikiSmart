@@ -20,6 +20,9 @@ const QuizzesList: React.FC = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState<boolean>(false)
   const [quizzes, setQuizzes] = useState<QuizItem[]>([])
+  const [quizAttempts, setQuizAttempts] = useState<any[]>([])
+  const [sideMenuOpen, setSideMenuOpen] = useState<boolean>(false)
+  const [selectedQuiz, setSelectedQuiz] = useState<any>(null)
 
 
   const getQuizzes = async () => {
@@ -63,8 +66,32 @@ const QuizzesList: React.FC = () => {
   
 
 
-  const onRetry = (quizId: number) => {
-    alert("Retry")
+  const onShowDetails = async (quizId: number) => {
+
+    setSelectedQuiz(quizzes.filter((item) => item.id == quizId)[0])
+
+    const request = await fetch(`${API_URL}/quiz/${quizId}/attempts`, {
+      method: 'GET',
+      headers: {
+         "content-type": "application/json",
+         "Authorization": "Bearer " + localStorage.getItem("access_token")
+      }
+    })
+
+    const response = await request.json()
+
+    if (request.status == 200) {
+      setSideMenuOpen(true)
+      setQuizAttempts(response.attempts)
+    } else if (request.status == 401) {
+      navigate('/login')
+    }
+
+    setLoading(false)
+  }
+
+  const onRetry = () => {
+    navigate(`/quiz/${selectedQuiz.id}`)
   }
 
   return (
@@ -115,10 +142,10 @@ const QuizzesList: React.FC = () => {
 
                 <div className="flex items-end">
                   <button
-                    onClick={() => onRetry(quiz.id)}
+                    onClick={() => onShowDetails(quiz.id)}
                     className="w-full cursor-pointer bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
                   >
-                    Try Again
+                    Show Details
                   </button>
                 </div>
               </div>
@@ -140,6 +167,57 @@ const QuizzesList: React.FC = () => {
             )
           }
 
+      </div>
+      <div className={"h-screen w-screen fixed top-0 right-0 transition-all " + (sideMenuOpen ? "visible" : "invisible")}>
+        <div className={"w-full h-full bg-black opacity-25 "} onClick={() => {setSideMenuOpen(false)}}></div>
+        <div className={"h-full text-slate-800 max-w-xl w-full overflow-auto transition absolute top-0 right-0 bg-white shadow-lg border-l-3 border-blue-500 " + (sideMenuOpen ? "translate-x-0" : "translate-x-full")}>
+            <div className="px-8 py-4 border-b border-gray-300">
+              <h2 className="font-semibold">Quiz Details</h2>
+            </div>
+            <div className="mx-8 py-10 border-b border-gray-300">
+              <h3 className="text-xl mb-5 font-semibold text-blue-500">{selectedQuiz?.articleTitle}</h3>
+              <div className="grid grid-cols-2 gap-x-5 gap-y-2">
+                <p><b>Create Date:</b> {new Date(selectedQuiz?.createdAt).toLocaleDateString()}</p>
+                <p><b>Qestions:</b> {selectedQuiz?.questionsCount}</p>
+                <p><b>Best Score:</b> {selectedQuiz?.bestScore} / {selectedQuiz?.questionsCount}</p>
+                <p><b>Last Attempt:</b> {new Date(selectedQuiz?.lastAttemptAt).toLocaleDateString()}</p>
+              </div>
+              <button
+                className="mt-7 cursor-pointer bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
+                onClick={onRetry}
+              >
+                Try Again
+              </button>
+            </div>
+            <div className="px-8 py-4 mt-5">
+              <h4 className="font-semibold">Attempts List</h4>
+              <div className="py-8 space-y-4">
+                {
+                  quizAttempts.map((item) => {
+
+                    let color = ( item.score == 0 ? "red" : ( item.score == selectedQuiz.questionsCount ? "green" : "yellow" ))
+
+                    return (
+                      <div className="flex justify-between items-center">
+                        <div className="flex justify-center gap-6 items-center">
+                          <div className={`w-16 h-16 font-semibold rounded-full border-3 border-${color}-500 bg-${color}-50 flex justify-center items-center`}>
+                            {item.score} / {selectedQuiz.questionsCount}
+                          </div>
+                          <p>{new Date(item.submitted_at).toLocaleString()}</p>
+                        </div>
+                        <button
+                          className="cursor-pointer bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
+                        >
+                          View
+                        </button>
+                      </div>
+                    )
+                  })
+                }
+                
+              </div>
+            </div>
+        </div>
       </div>
     </div>
   )

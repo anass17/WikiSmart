@@ -168,7 +168,7 @@ class ActionController:
 
     def get_score(self, quiz_id: int, answers: list[str], user_id: int):
 
-        quiz = self.quiz_model.get_quiz_by_id(quiz_id)
+        quiz = self.quiz_model.get_quiz_by_id(user_id, quiz_id)
         if (not quiz):
             raise HTTPException(status_code=404, detail="Quiz Not Found")
 

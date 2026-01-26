@@ -10,7 +10,7 @@ router = APIRouter(prefix="/quiz", tags=["Quiz"])
 
 
 @router.get("")
-def translate_text(
+def get_quizzes_list(
     db = Depends(get_db),
     user_id = Depends(get_current_user)
 ):
@@ -18,4 +18,32 @@ def translate_text(
     result = controller.get_user_quiz_list(user_id)
 
     return result
+
+
+
+@router.get("/{quiz_id}/attempts")
+def get_quiz_by_id(
+    quiz_id: int,
+    db = Depends(get_db),
+    user_id = Depends(get_current_user)
+):
+    controller = QuizController(db)
+    result = controller.get_quiz_attempts(user_id, quiz_id)
+
+    return result
+        
+        
+
+@router.get("/{quiz_id}")
+def get_quiz_details(
+    quiz_id: int,
+    db = Depends(get_db),
+    user_id = Depends(get_current_user)
+):
+    controller = QuizController(db)
+    quiz = controller.get_quiz_details(user_id, quiz_id)
+
+    return {
+        "quiz": quiz
+    }
         
