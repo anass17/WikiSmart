@@ -188,3 +188,9 @@ class ActionController:
             "score": score,
             "total": len(quiz_content)
         }
+    
+
+
+    def get_history(self, user_id):
+        actions = self.model.get_all_actions(user_id)
+        return [row._mapping for row in actions]

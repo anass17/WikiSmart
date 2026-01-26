@@ -26,7 +26,6 @@ const QuizRetry: React.FC = () => {
 
         if (request.status == 200) {
             setQuizDetails(response.quiz)
-            console.log(response.quiz)
             setQuizError("")
         } else if (request.status == 401) {
             navigate('/login')

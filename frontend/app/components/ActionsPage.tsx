@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import Navbar from "./Navbar";
 import Quiz from "./Quiz";
 
 const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8000";
@@ -7,18 +8,6 @@ const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8000";
 const ActionsPage: React.FC = () => {
 
   const navigate = useNavigate();
-
-  try {
-    if (!localStorage.getItem("first_name")) {
-      navigate("/login");
-      return <></>
-    }
-  } catch {
-    navigate("/login");
-    return <></>
-  }
-
-  const [userName] = useState(localStorage.getItem("first_name") + ' ' + localStorage.getItem("last_name"));
 
   // State for article ingestion
   const [ingestOption, setIngestOption] = useState<"url" | "keyword" | "pdf">("url");
@@ -155,24 +144,7 @@ const ActionsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
-      <nav className="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white">
-        <div className="text-2xl font-bold font-sans">WikiSmart</div>
-        <div className="flex items-center space-x-4">
-          <span className="border-r px-4">{userName}</span>
-          <a href="/actions" className="hover:underline">
-            Actions
-          </a>
-          <a href="/quizzes" className="hover:underline">
-            Quizzes
-          </a>
-          <a href="/profile" className="hover:underline">
-            Profile
-          </a>
-          <button className="bg-white cursor-pointer text-blue-900 font-semibold px-3 py-1 rounded hover:bg-gray-100">
-            Sign Out
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="p-6 space-y-8">
         {/* Ingest Form */}

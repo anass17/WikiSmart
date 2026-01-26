@@ -1,4 +1,4 @@
-from app.db.models import Action
+from app.db.models import Action, Article
 from sqlalchemy.orm import Session
 from app.db.enums.action_enum import EnumAction
 
@@ -25,7 +25,17 @@ class ActionModel:
 
 
 
-    # def get_action(self, url, topic):
-    #     return self.db.query(Action).where(
-    #         (Article.url == url) & (Article.title == topic)
-    #     ).first()
+    def get_all_actions(self, user_id):
+        return (
+            self.db.query(
+                Action.id,
+                Article.title,
+                Action.type,
+                Action.created_at,
+                Action.option,
+            )
+            .join(Article, Article.id == Action.article_id)
+            .where(Action.user_id == user_id)
+            .order_by(Action.created_at.desc())
+            .all()
+        )

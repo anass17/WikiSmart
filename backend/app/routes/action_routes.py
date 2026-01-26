@@ -56,3 +56,15 @@ def translate_text(
 
     return result
         
+
+
+@router.get("/history")
+def get_actions_history(
+    db = Depends(get_db),
+    user_id = Depends(get_current_user)
+):
+    controller = ActionController(db)
+    result = controller.get_history(user_id)
+
+    return result
+        

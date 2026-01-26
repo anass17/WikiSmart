@@ -27,8 +27,8 @@ const Navbar = () => {
                 <a href="/quizzes" className="hover:underline">
                     Quizzes
                 </a>
-                <a href="/profile" className="hover:underline">
-                    Profile
+                <a href="/history" className="hover:underline">
+                    History
                 </a>
                 <button className="bg-white cursor-pointer text-blue-900 font-semibold px-3 py-1 rounded hover:bg-gray-100">
                     Sign Out
