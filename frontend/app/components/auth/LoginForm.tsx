@@ -3,11 +3,9 @@ import { useNavigate } from "react-router";
 
 const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8000";
 
-const RegisterForm: React.FC = () => {
+const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
     email: "",
     password: "",
   });
@@ -23,9 +21,14 @@ const RegisterForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (loading == true) {
+        return
+    }
+
     setLoading(true)
 
-    const request = await fetch(`${API_URL}/auth/register`, {
+    const request = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: {
          "content-type": "application/json"
@@ -35,11 +38,11 @@ const RegisterForm: React.FC = () => {
 
     const response = await request.json()
 
-    if (request.status == 201) {
+    if (request.status == 200) {
 
       setStatus({
         type: "success",
-        message: "Registered successfully! ..."
+        message: "Logged in successfully! ..."
       })
 
       localStorage.setItem("access_token", response.access_token);
@@ -50,6 +53,15 @@ const RegisterForm: React.FC = () => {
       setTimeout(() => {
         navigate("/user/dashboard");
       }, 2000)
+
+    } else if (request.status == 401) {
+
+        setStatus({
+        type: "error",
+        message: response.detail
+      })
+
+      setLoading(false)
 
     } else {
 
@@ -62,19 +74,24 @@ const RegisterForm: React.FC = () => {
 
     }
 
+    // .then(response => response.json())
+    // .then(data => {
+    //   setLoading(false)
+    //   console.log(data)
+    //   if data
+    // })
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 p-4">
       <form
         onSubmit={handleSubmit}
         className="bg-white rounded-xl shadow-lg p-8 w-full max-w-xl"
       >
         <h1 className="text-3xl font-bold text-center text-blue-900 mb-5">
-          Join WikiSmart
+            Sign In
         </h1>
         <p className="text-center text-gray-600 mb-10">
-          Summarize, translate, and generate QCM from your articles with AI
+            Log in to your account and continue your journey
         </p>
 
         {
@@ -92,48 +109,6 @@ const RegisterForm: React.FC = () => {
             </p>
           )
         }
-
-        <div className="grid grid-cols-2 gap-5">
-          {/* First Name */}
-          <div className="mb-4">
-            <label
-              htmlFor="firstName"
-              className="block text-gray-700 font-semibold mb-1"
-            >
-              First Name
-            </label>
-            <input
-              type="text"
-              name="first_name"
-              id="firstName"
-              value={formData.first_name}
-              onChange={handleChange}
-              placeholder="Ahmed"
-              className="w-full border border-gray-300 text-slate-700 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-
-          {/* Last Name */}
-          <div className="mb-4">
-            <label
-              htmlFor="lastName"
-              className="block text-gray-700 font-semibold mb-1"
-            >
-              Last Name
-            </label>
-            <input
-              type="text"
-              name="last_name"
-              id="lastName"
-              value={formData.last_name}
-              onChange={handleChange}
-              placeholder="Karim"
-              className="w-full border border-gray-300 text-slate-700 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-        </div>
 
         {/* Email */}
         <div className="mb-4">
@@ -189,14 +164,13 @@ const RegisterForm: React.FC = () => {
               type="submit"
               className="w-full bg-blue-900 text-white font-semibold py-2 rounded-md hover:bg-blue-800 transition-colors cursor-pointer"
             >
-              Register
+              Login
             </button>
           )
         }
         
       </form>
-    </div>
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

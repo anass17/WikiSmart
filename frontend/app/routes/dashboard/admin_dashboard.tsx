@@ -1,5 +1,5 @@
-import type { Route } from "./+types/home";
-import AdminDashboard from "../components/AdminDashboard";
+import type { Route } from "../+types/home";
+import AdminDashboard from "../../components/dashboard/AdminDashboard";
 
 export function meta({}: Route.MetaArgs) {
   return [

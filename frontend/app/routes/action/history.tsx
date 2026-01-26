@@ -1,5 +1,5 @@
-import type { Route } from "./+types/home";
-import HistoryTimeline from "../components/HistoryTimeline"
+import type { Route } from "../+types/home";
+import ActionHistory from "../../components/action/ActionsHistory"
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,7 +11,7 @@ export function meta({}: Route.MetaArgs) {
 export default function HistoryRoute() {
   return (
     <>
-      <HistoryTimeline />
+      <ActionHistory />
     </>
   )
 }

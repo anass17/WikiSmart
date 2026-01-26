@@ -1,5 +1,5 @@
-import type { Route } from "./+types/home";
-import QuizzesList from "../components/QuizzesList"
+import type { Route } from "../+types/home";
+import QuizzesList from "../../components/quiz/QuizzesList"
 
 export function meta({}: Route.MetaArgs) {
   return [

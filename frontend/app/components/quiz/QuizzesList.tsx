@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router";
-import Navbar from "./Navbar"
+import Navbar from "../ui/Navbar";
 
 const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -95,9 +95,7 @@ const QuizzesList: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <Navbar />
-      <div className="px-10 py-20">
+    <>
         <h1 className="text-2xl mb-3 text-slate-800 text-center font-bold">Quiz List</h1>
         <p className="text-lg mb-14 text-slate-600 text-center">Here you can find the list of generated quizzes</p>
         <div className="grid grid-cols-2 gap-5">
@@ -166,8 +164,6 @@ const QuizzesList: React.FC = () => {
               )
             )
           }
-
-      </div>
       <div className={"h-screen w-screen fixed top-0 right-0 transition-all " + (sideMenuOpen ? "visible" : "invisible")}>
         <div className={"w-full h-full bg-black opacity-25 "} onClick={() => {setSideMenuOpen(false)}}></div>
         <div className={"h-full text-slate-800 max-w-xl w-full overflow-auto transition absolute top-0 right-0 bg-white shadow-lg border-l-3 border-blue-500 " + (sideMenuOpen ? "translate-x-0" : "translate-x-full")}>
@@ -220,7 +216,7 @@ const QuizzesList: React.FC = () => {
             </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

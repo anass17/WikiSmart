@@ -1,5 +1,5 @@
-import type { Route } from "./+types/home";
-import ActionsPage from "../components/ActionsPage"
+import type { Route } from "../+types/home";
+import ActionsPage from "../../components/action/ActionsPage"
 
 export function meta({}: Route.MetaArgs) {
   return [

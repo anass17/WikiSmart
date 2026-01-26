@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import Navbar from "./Navbar";
-import Quiz from "./Quiz";
+import Navbar from "../ui/Navbar";
+import Quiz from "../quiz/Quiz";
 
 const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8000";
 
@@ -490,147 +490,143 @@ const ArticleIngestion = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
-      <Navbar />
-      <div className="p-6">
-        <div className="max-w-4xl mx-auto">
-          <header className="mb-8">
-            <h1 className="text-3xl font-extrabold text-blue-600 tracking-tight">Content Studio</h1>
-            <p className="text-slate-500">Transform Wikipedia articles or PDFs into insights.</p>
-          </header>
+    <>
+      <div className="max-w-4xl mx-auto">
+        <header className="mb-8">
+          <h1 className="text-3xl font-extrabold text-blue-600 tracking-tight">Content Studio</h1>
+          <p className="text-slate-500">Transform Wikipedia articles or PDFs into insights.</p>
+        </header>
 
-          {/* --- INGESTION FORM --- */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
-            <div className="flex bg-slate-50 border-b border-slate-200">
-              {['URL', 'Topic', 'PDF'].map((tab) => (
+        {/* --- INGESTION FORM --- */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+          <div className="flex bg-slate-50 border-b border-slate-200">
+            {['URL', 'Topic', 'PDF'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setSourceTab(tab)}
+                className={`px-8 py-4 text-sm font-bold transition-colors ${sourceTab === tab ? 'bg-white text-blue-600 border-t-2 border-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          <div className="p-6">
+            <form onSubmit={handleIngest} className="space-y-4">
+              {sourceTab !== 'PDF' ? (
+                <input 
+                  type="text" 
+                  placeholder={sourceTab === 'URL' ? "Paste Wikipedia URL here..." : "Search a topic..."}
+                  className="w-full p-4 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              ) : (
+                <div className="border-2 border-dashed border-blue-200 bg-blue-50 rounded-lg p-10 text-center">
+                  <input type="file" id="native-file" className="hidden" />
+                  <label htmlFor="native-file" className="cursor-pointer text-blue-600 font-semibold">
+                    Click to select a PDF file
+                  </label>
+                </div>
+              )}
+              <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-transform active:scale-[0.98]">
+                Ingest Source
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* --- CONTENT PREVIEW --- */}
+        {ingestedData && (
+          <div className="mb-6">
+            <button 
+              onClick={() => setShowContent(!showContent)}
+              className="flex items-center gap-2 text-sm font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-full mb-4"
+            >
+              <Icons.Check /> {showContent ? 'Hide Extracted Text' : 'View Extracted Text'}
+            </button>
+            
+            {showContent && (
+              <div className="p-6 bg-white border border-slate-200 rounded-xl text-slate-600 leading-relaxed shadow-inner">
+                {ingestedData}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* --- ACTIONS SECTION --- */}
+        {ingestedData && (
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h3 className="text-lg font-bold mb-4 text-slate-700">Apply AI Action</h3>
+            
+            {/* Action Selection */}
+            <div className="flex gap-2 mb-6 p-1 bg-slate-100 rounded-lg">
+              {['Summarize', 'Translate', 'Generate Quiz'].map(action => (
                 <button
-                  key={tab}
-                  onClick={() => setSourceTab(tab)}
-                  className={`px-8 py-4 text-sm font-bold transition-colors ${sourceTab === tab ? 'bg-white text-blue-600 border-t-2 border-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
+                  key={action}
+                  onClick={() => {
+                    setActiveAction(action);
+                    setSubOption(action === 'Summarize' ? 'Short' : action === 'Translate' ? 'French' : '5');
+                  }}
+                  className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${activeAction === action ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
                 >
-                  {tab}
+                  {action}
                 </button>
               ))}
             </div>
 
-            <div className="p-6">
-              <form onSubmit={handleIngest} className="space-y-4">
-                {sourceTab !== 'PDF' ? (
-                  <input 
-                    type="text" 
-                    placeholder={sourceTab === 'URL' ? "Paste Wikipedia URL here..." : "Search a topic..."}
-                    className="w-full p-4 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                  />
-                ) : (
-                  <div className="border-2 border-dashed border-blue-200 bg-blue-50 rounded-lg p-10 text-center">
-                    <input type="file" id="native-file" className="hidden" />
-                    <label htmlFor="native-file" className="cursor-pointer text-blue-600 font-semibold">
-                      Click to select a PDF file
-                    </label>
+            {/* Sub-Options */}
+            <div className="mb-6">
+              <div className="flex flex-wrap gap-2">
+                {activeAction === 'Summarize' && ['Short', 'Medium'].map(o => (
+                  <button key={o} onClick={() => setSubOption(o)} className={`px-4 py-1.5 rounded-full text-xs font-bold border ${subOption === o ? 'bg-blue-600 text-white border-blue-600' : 'border-slate-200 text-slate-500'}`}>{o}</button>
+                ))}
+                {activeAction === 'Translate' && ['French', 'Arabic', 'English', 'Spanish'].map(o => (
+                  <button key={o} onClick={() => setSubOption(o)} className={`px-4 py-1.5 rounded-full text-xs font-bold border ${subOption === o ? 'bg-blue-600 text-white border-blue-600' : 'border-slate-200 text-slate-500'}`}>{o}</button>
+                ))}
+                {activeAction === 'Generate Quiz' && (
+                  <div className="w-full">
+                    <input type="range" min="5" max="15" value={quizRange} onChange={(e) => setQuizRange(+e.target.value)} className="w-full accent-blue-600" />
+                    <div className="flex justify-between text-[10px] font-bold text-slate-400 mt-1 uppercase">
+                      <span>Min: 5</span>
+                      <span className="text-blue-600 font-black">Target: {quizRange}</span>
+                      <span>Max: 15</span>
+                    </div>
                   </div>
                 )}
-                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-transform active:scale-[0.98]">
-                  Ingest Source
-                </button>
-              </form>
+              </div>
             </div>
+
+            <button onClick={handleApplyAction} className="w-full bg-slate-800 text-white py-3 rounded-lg font-bold hover:bg-black transition-colors">
+              Process Content
+            </button>
           </div>
+        )}
 
-          {/* --- CONTENT PREVIEW --- */}
-          {ingestedData && (
-            <div className="mb-6">
-              <button 
-                onClick={() => setShowContent(!showContent)}
-                className="flex items-center gap-2 text-sm font-bold text-blue-600 bg-blue-50 px-4 py-2 rounded-full mb-4"
-              >
-                <Icons.Check /> {showContent ? 'Hide Extracted Text' : 'View Extracted Text'}
-              </button>
-              
-              {showContent && (
-                <div className="p-6 bg-white border border-slate-200 rounded-xl text-slate-600 leading-relaxed shadow-inner">
-                  {ingestedData}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* --- ACTIONS SECTION --- */}
-          {ingestedData && (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-              <h3 className="text-lg font-bold mb-4 text-slate-700">Apply AI Action</h3>
-              
-              {/* Action Selection */}
-              <div className="flex gap-2 mb-6 p-1 bg-slate-100 rounded-lg">
-                {['Summarize', 'Translate', 'Generate Quiz'].map(action => (
-                  <button
-                    key={action}
-                    onClick={() => {
-                      setActiveAction(action);
-                      setSubOption(action === 'Summarize' ? 'Short' : action === 'Translate' ? 'French' : '5');
-                    }}
-                    className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${activeAction === action ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500'}`}
-                  >
-                    {action}
-                  </button>
+        {/* --- RESULTS DISPLAY --- */}
+        {result && (
+          <div className="mt-8 p-8 bg-white rounded-xl border-2 border-blue-100 shadow-lg mb-10">
+            {result.type === 'text' ? (
+              <p className="text-slate-700 leading-relaxed font-medium">{result.content}</p>
+            ) : (
+              <div className="space-y-6">
+                {result.questions.map((q: any, i: number) => (
+                  <div key={i} className="border-b border-slate-100 pb-4">
+                    <p className="font-bold mb-3">{q.q}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {q.options.map((opt: any, idx: number) => (
+                        <button key={idx} className="text-left p-3 text-sm bg-slate-50 border border-slate-200 rounded-lg hover:border-blue-500 transition-colors">
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 ))}
+                <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Submit Answers</button>
               </div>
-
-              {/* Sub-Options */}
-              <div className="mb-6">
-                <div className="flex flex-wrap gap-2">
-                  {activeAction === 'Summarize' && ['Short', 'Medium'].map(o => (
-                    <button key={o} onClick={() => setSubOption(o)} className={`px-4 py-1.5 rounded-full text-xs font-bold border ${subOption === o ? 'bg-blue-600 text-white border-blue-600' : 'border-slate-200 text-slate-500'}`}>{o}</button>
-                  ))}
-                  {activeAction === 'Translate' && ['French', 'Arabic', 'English', 'Spanish'].map(o => (
-                    <button key={o} onClick={() => setSubOption(o)} className={`px-4 py-1.5 rounded-full text-xs font-bold border ${subOption === o ? 'bg-blue-600 text-white border-blue-600' : 'border-slate-200 text-slate-500'}`}>{o}</button>
-                  ))}
-                  {activeAction === 'Generate Quiz' && (
-                    <div className="w-full">
-                      <input type="range" min="5" max="15" value={quizRange} onChange={(e) => setQuizRange(+e.target.value)} className="w-full accent-blue-600" />
-                      <div className="flex justify-between text-[10px] font-bold text-slate-400 mt-1 uppercase">
-                        <span>Min: 5</span>
-                        <span className="text-blue-600 font-black">Target: {quizRange}</span>
-                        <span>Max: 15</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <button onClick={handleApplyAction} className="w-full bg-slate-800 text-white py-3 rounded-lg font-bold hover:bg-black transition-colors">
-                Process Content
-              </button>
-            </div>
-          )}
-
-          {/* --- RESULTS DISPLAY --- */}
-          {result && (
-            <div className="mt-8 p-8 bg-white rounded-xl border-2 border-blue-100 shadow-lg mb-10">
-              {result.type === 'text' ? (
-                <p className="text-slate-700 leading-relaxed font-medium">{result.content}</p>
-              ) : (
-                <div className="space-y-6">
-                  {result.questions.map((q: any, i: number) => (
-                    <div key={i} className="border-b border-slate-100 pb-4">
-                      <p className="font-bold mb-3">{q.q}</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {q.options.map((opt: any, idx: number) => (
-                          <button key={idx} className="text-left p-3 text-sm bg-slate-50 border border-slate-200 rounded-lg hover:border-blue-500 transition-colors">
-                            {opt}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                  <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Submit Answers</button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
-    </div>
-    
+    </>
   );
 };
 
