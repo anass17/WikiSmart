@@ -20,6 +20,20 @@ def get_quizzes_list(
     return result
 
 
+@router.get("/attempt/{id}")
+def get_quiz_attempt(
+    id: int,
+    db = Depends(get_db),
+    user_id = Depends(get_current_user)
+):
+    controller = QuizController(db)
+    attempt = controller.get_attempt_by_id(id)
+
+    return {
+        "attempt": attempt
+    }
+
+
 
 @router.get("/{quiz_id}/attempts")
 def get_quiz_by_id(

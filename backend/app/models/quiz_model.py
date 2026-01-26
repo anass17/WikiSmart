@@ -106,3 +106,18 @@ class QuizModel:
         )
 
         return attempts
+
+
+
+    def get_attempt_by_id(self, id):
+        attempt = (
+            self.db.query(
+                QuizAttempt,
+                Quiz
+            )
+            .join(Quiz, Quiz.id == QuizAttempt.quiz_id)
+            .where(QuizAttempt.id == id)
+            .first()
+        )
+
+        return attempt

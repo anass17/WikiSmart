@@ -37,6 +37,16 @@ class QuizController:
         quiz = self.model.get_quiz_by_id(user_id, quiz_id)
 
         if not quiz:
-            raise HTTPException(status_code=404, detail="Article Not Found")
+            raise HTTPException(status_code=404, detail="Quix Not Found")
         
         return dict(quiz._mapping)
+
+
+
+    def get_attempt_by_id(self, attempt_id):
+        attempt = self.model.get_attempt_by_id(attempt_id)
+
+        if not attempt:
+            raise HTTPException(status_code=404, detail="Attempt Not Found")
+
+        return dict(attempt._mapping)

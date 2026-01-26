@@ -6,5 +6,6 @@ export default [
     { path: "login", file: "routes/login.tsx" },
     { path: "actions", file: "routes/action.tsx" },
     { path: "quizzes", file: "routes/quizzes.tsx" },
-    { path: "quiz/:id", file: "routes/quiz.tsx" }
+    { path: "quiz/:id", file: "routes/quiz.tsx" },
+    { path: "attempt/:id", file: "routes/attempt.tsx" },
 ] satisfies RouteConfig;
