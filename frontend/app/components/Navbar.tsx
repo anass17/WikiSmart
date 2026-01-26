@@ -30,7 +30,10 @@ const Navbar = () => {
                 <a href="/history" className="hover:underline">
                     History
                 </a>
-                <button className="bg-white cursor-pointer text-blue-900 font-semibold px-3 py-1 rounded hover:bg-gray-100">
+                <button 
+                    className="bg-white cursor-pointer text-blue-900 font-semibold px-3 py-1 rounded hover:bg-gray-100"
+                    onClick={() => {navigate('/logout')}}
+                >
                     Sign Out
                 </button>
             </div>

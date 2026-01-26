@@ -9,4 +9,5 @@ export default [
     { path: "quiz/:id", file: "routes/quiz.tsx" },
     { path: "attempt/:id", file: "routes/attempt.tsx" },
     { path: "history", file: "routes/history.tsx" },
+    { path: "logout", file: "routes/logout.tsx" },
 ] satisfies RouteConfig;
