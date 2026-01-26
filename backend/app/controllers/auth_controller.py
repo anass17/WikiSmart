@@ -13,6 +13,9 @@ class AuthController:
     def register_user(self, first_name: str, last_name: str, email: str, password: str):
         existing_user = self.model.get_user_by_email(email)
 
+        first_name = first_name.capitalize()
+        last_name = last_name.capitalize()
+
         if existing_user:
             return None
 
@@ -24,6 +27,7 @@ class AuthController:
             "access_token": token,
             "first_name": first_name,
             "last_name": last_name,
+            "role": "USER"
         }
 
 
@@ -41,5 +45,6 @@ class AuthController:
         return {
             "access_token": token,
             "first_name": user.first_name,
-            "last_name": user.last_name
+            "last_name": user.last_name,
+            "role": user.role
         }

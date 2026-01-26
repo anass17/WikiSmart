@@ -7,9 +7,7 @@ const Logout: React.FC = () => {
 
     useEffect(() => {
         if (localStorage.getItem("access_token")) {
-            localStorage.removeItem("access_token")
-            localStorage.removeItem("first_name")
-            localStorage.removeItem("last_name")
+            localStorage.clear()
         }
 
         navigate('/login')

@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 
+
 const Navbar = () => {
+
     const navigate = useNavigate();
 
     try {
         if (!localStorage.getItem("first_name")) {
-        navigate("/login");
-        return <></>
+            navigate("/login");
+            return <></>
         }
     } catch {
         navigate("/login");
@@ -15,32 +17,55 @@ const Navbar = () => {
     }
 
     const [userName] = useState(localStorage.getItem("first_name") + ' ' + localStorage.getItem("last_name"));
+    const [role] = useState(localStorage.getItem("role"))
 
     return (
-        <nav className="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white">
-            <div className="text-2xl font-bold font-sans">WikiSmart</div>
-            <div className="flex items-center space-x-4">
-                <a href="/user/dashboard" className="hover:text-slate-300 transition border-r px-4">
-                    {userName}
-                </a>
-                <a href="/actions" className="hover:text-slate-300 transition">
-                    Actions
-                </a>
-                <a href="/quizzes" className="hover:text-slate-300 transition">
-                    Quizzes
-                </a>
-                <a href="/history" className="hover:text-slate-300 transition">
-                    History
-                </a>
-                <button 
-                    className="bg-white cursor-pointer text-blue-900 font-semibold px-3 py-1 rounded hover:bg-gray-100"
-                    onClick={() => {navigate('/logout')}}
-                >
-                    Sign Out
-                </button>
-            </div>
-        </nav>
-    )
-}
+        <>
+
+            <nav className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white shadow-lg">
+                
+                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                
+                    <div className="flex items-center">
+                        <a href={role == "USER" ? "/user/dashboard" : "/dashboard"} className="text-2xl tracking-wider select-none">
+                            Wiki<span className="text-blue-300">Smart</span>
+                        </a>
+                    </div>
+
+                    <div className="flex items-center space-x-6 text-sm font-semibold">
+                        <a href={role == "USER" ? "/user/dashboard" : "/dashboard"} className="flex items-center gap-2 hover:text-blue-200 transition-colors group">
+                            {userName}
+                        </a>
+                        
+                        <div className="h-6 w-[1px] bg-white/20"></div>
+
+                        {
+                            role === "USER" ? (
+                                <>
+                                    <a href="/ingest" className="hover:text-blue-200 transition-colors">Studio</a>
+                                    <a href="/quizzes" className="hover:text-blue-200 transition-colors">My Quizzes</a>
+                                    <a href="/history" className="hover:text-blue-200 transition-colors">History</a>
+                                </>
+                            ) : (
+                                <>
+                                    <a href="/history" className="hover:text-blue-200 transition-colors">History</a>
+                                </>
+                            )
+                        }
+                        
+
+                        <button 
+                            className="bg-white cursor-pointer hover:bg-blue-100 px-4 py-2 font-semibold rounded-md text-xs border text-blue-500 transition-all"
+                            onClick={() => {navigate('/logout')}}
+                        >
+                            Logout
+                        </button>
+                    </div>
+                
+                </div>
+            </nav>
+        </>
+    );
+};
 
 export default Navbar

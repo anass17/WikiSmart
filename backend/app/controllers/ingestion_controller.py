@@ -25,7 +25,7 @@ class IngestionController:
 
     def get_wikipedia_article(self, ressource: str, method, lang):
 
-        ressource = ressource.lower()
+        ressource = ressource.capitalize()
         
         if method == 'url':
             url = ressource
@@ -35,7 +35,7 @@ class IngestionController:
                 raise HTTPException(status_code=400, detail=str(e))
         else:
             topic = ressource
-            url = f"https://{lang}.wikipedia.org/wiki/{topic.replace(' ', '_')}"
+            url = f"https://{lang}.wikipedia.org/wiki/{topic.replace(' ', '_').lower()}"
 
         wikipedia.set_lang(lang)
 

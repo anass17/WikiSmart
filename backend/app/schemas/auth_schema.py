@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
+from typing import Literal
 
 
 
@@ -24,3 +25,4 @@ class AuthResponse(BaseModel):
     access_token: str
     first_name: str
     last_name: str
+    role: Literal['USER', 'ADMIN']
