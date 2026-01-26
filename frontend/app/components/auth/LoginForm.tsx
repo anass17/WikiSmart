@@ -51,7 +51,7 @@ const LoginForm: React.FC = () => {
       localStorage.setItem("role", response.role);
 
       setTimeout(() => {
-        navigate("/user/dashboard");
+        navigate(response.role == "USER" ? "/user/dashboard" : "/dashboard");
       }, 2000)
 
     } else if (request.status == 401) {

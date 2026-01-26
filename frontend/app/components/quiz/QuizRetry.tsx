@@ -1,45 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import Quiz from "./Quiz";
-import Navbar from "../ui/Navbar";
 
 const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8000";
-
-// const QuizRetry: React.FC = () => {
-
-
-
-//     return (
-//         <>
-//             {
-//                 quizError ? (
-//                     <div className="text-center py-10 text-red-700">
-//                         Error!
-//                     </div>
-//                 ) : (
-//                     quizLoading ? (
-//                         <div className="text-center py-10">
-//                             Loading ...
-//                         </div>
-//                     ) : (
-//                         <>
-//                             <h1 className="text-2xl mb-10 font-semibold text-center">Retry a quiz</h1>
-//                             <div className="text-sm text-blue-500 mb-10 font-semibold grid grid-cols-3 gap-5 text-center">
-//                                 <p>{quizDetails?.title}</p>
-//                                 <p>Created At: {new Date(quizDetails?.submitted_at).toLocaleDateString()}</p>
-//                                 <p>{quizDetails?.questions_count} Questions</p>
-//                             </div>
-//                             <Quiz quizId={+id} actionQCM={quizDetails?.content} />
-//                         </>
-//                     )
-//                 )
-//             }
-//         </>
-//     );
-// };
-
-// export default QuizRetry;
-
 
 const QuizRetry = () => {
 
@@ -50,7 +12,6 @@ const QuizRetry = () => {
     const [quizLoading, setQuizLoading] = useState<boolean>(true)
     const [answers, setAnswers] = useState<(string | undefined)[]>([]);
     const [submitted, setSubmitted] = useState(false);
-    const [score, setScore] = useState(0);
     const [quizResult, setQuizResult] = useState<any>()
 
     const getQuizQuestions = async () => {
@@ -220,7 +181,9 @@ const QuizRetry = () => {
                         >
                         {option}
                         {submitted && isCorrect && (
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            <div>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            </div>
                         )}
                         </button>
                     );

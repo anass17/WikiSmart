@@ -48,7 +48,9 @@ const Navbar = () => {
                                 </>
                             ) : (
                                 <>
-                                    <a href="/history" className="hover:text-blue-200 transition-colors">History</a>
+                                    <a href="/dashboard" className="hover:text-blue-200 transition-colors">Dashboard</a>
+                                    <a href="/dashboard" className="hover:text-blue-200 transition-colors">Users</a>
+                                    <a href="/dashboard" className="hover:text-blue-200 transition-colors">Settings</a>
                                 </>
                             )
                         }

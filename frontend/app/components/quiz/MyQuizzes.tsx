@@ -339,7 +339,7 @@ const MyQuizzes = () => {
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Created: {new Date(quiz.createdAt).toLocaleDateString()}</span>
                   </div>
                   
-                  <h3 className="text-lg font-bold text-slate-800 mb-1 group-hover:text-blue-600 transition-colors line-clamp-1">
+                  <h3 className="text-lg font-bold capitalize text-slate-800 mb-1 group-hover:text-blue-600 transition-colors line-clamp-1">
                     {quiz.articleTitle}
                   </h3>
                   <p className="text-sm text-slate-500 mb-6">{quiz.questionsCount} Questions Total</p>
