@@ -88,6 +88,7 @@ class StatisticsModel:
                 User.first_name.label("firstName"),
                 User.last_name.label("lastName"),
                 User.email,
+                User.created_at.label("regDate"),
                 func.count(Action.id).label("actionsCount"),
                 func.count(Quiz.id).label("quizzesCount")
             )
