@@ -3,8 +3,9 @@ import { useNavigate } from "react-router";
 
 const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:8000";
 
-const RegisterForm: React.FC = () => {
+const RegisterPage = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -16,10 +17,6 @@ const RegisterForm: React.FC = () => {
     type: null,
     message: ""
   })
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +36,7 @@ const RegisterForm: React.FC = () => {
 
       setStatus({
         type: "success",
-        message: "Registered successfully! ..."
+        message: "Registered successfully!"
       })
 
       localStorage.setItem("access_token", response.access_token);
@@ -55,146 +52,108 @@ const RegisterForm: React.FC = () => {
 
       setStatus({
         type: "error",
-        message: "You have errors in your form"
+        message: response.detail
       })
 
-      setLoading(false)
-
     }
+      
+    setLoading(false)
 
   };
 
   return (
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-lg p-8 w-full max-w-xl"
-      >
-        <h1 className="text-3xl font-bold text-center text-blue-900 mb-5">
-          Join WikiSmart
-        </h1>
-        <p className="text-center text-gray-600 mb-10">
-          Summarize, translate, and generate QCM from your articles with AI
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 font-sans p-4">
+      <div className="max-w-xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
 
-        {
-          status.type == "success" && (
-            <p className="w-full bg-green-200 text-slate-700 font-semibold px-8 py-5 rounded-md border-green-500 mb-5 -mt-5 text-center">
-              {status.message}
-            </p>
-          )
-        }
-
-        {
-          status.type == "error" && (
-            <p className="w-full bg-red-200 text-slate-700 font-semibold px-8 py-5 rounded-md border-red-500 mb-5 -mt-5 text-center">
-              {status.message}
-            </p>
-          )
-        }
-
-        <div className="grid grid-cols-2 gap-5">
-          {/* First Name */}
-          <div className="mb-4">
-            <label
-              htmlFor="firstName"
-              className="block text-gray-700 font-semibold mb-1"
-            >
-              First Name
-            </label>
-            <input
-              type="text"
-              name="first_name"
-              id="firstName"
-              value={formData.first_name}
-              onChange={handleChange}
-              placeholder="Ahmed"
-              className="w-full border border-gray-300 text-slate-700 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
+        {/* --- RIGHT SIDE: REGISTER FORM --- */}
+        <div className="p-8">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-black text-slate-800">Create Account</h2>
+            <p className="text-slate-500 text-sm mt-1">Get access to all AI features and tracking.</p>
           </div>
 
-          {/* Last Name */}
-          <div className="mb-4">
-            <label
-              htmlFor="lastName"
-              className="block text-gray-700 font-semibold mb-1"
-            >
-              Last Name
-            </label>
-            <input
-              type="text"
-              name="last_name"
-              id="lastName"
-              value={formData.last_name}
-              onChange={handleChange}
-              placeholder="Karim"
-              className="w-full border border-gray-300 text-slate-700 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
+          {
+            status.type == "error" && (
+              <p className="text-red-500 -mt-5 mb-5 text-center">{status.message}</p>
+            )
+          }
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* First & Last Name Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">First Name</label>
+                <input 
+                  type="text" 
+                  required
+                  className="w-full p-3.5 text-slate-500 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm"
+                  placeholder="New"
+                  onChange={(e) => setFormData({...formData, first_name: e.target.value})}
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Last Name</label>
+                <input 
+                  type="text" 
+                  required
+                  className="w-full p-3.5 text-slate-500 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm"
+                  placeholder="User"
+                  onChange={(e) => setFormData({...formData, last_name: e.target.value})}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Email Address</label>
+              <input 
+                type="email" 
+                required
+                className="w-full p-3.5 text-slate-500 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm"
+                placeholder="user@example.com"
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Password</label>
+              <input 
+                type="password" 
+                required
+                className="w-full p-3.5 text-slate-500 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-sm"
+                placeholder="Must be 8+ characters"
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+              />
+            </div>
+
+            {
+              loading ? (
+                <button className="w-full bg-gray-100 cursor-pointer text-slate-700 font-black py-4 rounded-xl transition-all shadow-xl">
+                  Registering ...
+                </button>
+              ) : (
+                status.type && status.type == "success" ? (
+                  <button  className="w-full bg-green-100 border border-green-300 text-green-700 font-black py-4 rounded-xl transition-all shadow-xl">
+                    {status.message}
+                  </button>
+                ) : (
+                  <button type="submit" className="w-full cursor-pointer bg-slate-900 hover:bg-black text-white font-black py-4 rounded-xl transition-all shadow-xl shadow-slate-200 active:scale-[0.98] mt-2">
+                    Create My Account
+                  </button>
+                )
+              )
+            }
+          </form>
+
+          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
+            <p className="text-sm text-slate-500">
+              Already have an account? <a href="/login" className="font-bold text-blue-600 hover:underline">Sign In</a>
+            </p>
           </div>
         </div>
 
-        {/* Email */}
-        <div className="mb-4">
-          <label
-            htmlFor="email"
-            className="block text-gray-700 font-semibold mb-1"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="email@example.com"
-            className="w-full border border-gray-300 text-slate-700 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        {/* Password */}
-        <div className="mb-6">
-          <label
-            htmlFor="password"
-            className="block text-gray-700 font-semibold mb-1"
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="strong password"
-            className="w-full border border-gray-300 text-slate-700 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        {/* Submit Button */}
-        {
-          loading ? (
-            <button
-              type="submit"
-              className="w-full bg-gray-200 text-slate-700 font-semibold py-2 rounded-md"
-            >
-              Loading ...
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="w-full bg-blue-900 text-white font-semibold py-2 rounded-md hover:bg-blue-800 transition-colors cursor-pointer"
-            >
-              Register
-            </button>
-          )
-        }
-        
-      </form>
+      </div>
+    </div>
   );
 };
 
-export default RegisterForm;
+export default RegisterPage;
