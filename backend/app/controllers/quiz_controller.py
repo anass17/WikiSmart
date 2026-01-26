@@ -39,7 +39,18 @@ class QuizController:
         if not quiz:
             raise HTTPException(status_code=404, detail="Quix Not Found")
         
-        return dict(quiz._mapping)
+        quiz_details = dict(quiz._mapping)
+
+        # Only include the question and options
+        
+        quiz_questions = [{
+            "question": item["question"],
+            "options": item["options"]
+        } for item in quiz_details["content"]]
+
+        quiz_details["content"] = quiz_questions
+        
+        return quiz_details
 
 
 
