@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from app.controllers.action_controller import ActionController
 from app.schemas.content_schema import SummerizeRequest, QCMRequest, TranslateRequest, QuizScoreRequest
 from app.db.deps import get_db
-from app.core.deps import get_current_user
+from app.core.deps import require_roles
 
 
 router = APIRouter(prefix="/action", tags=["Action"])
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/action", tags=["Action"])
 def get_summarized_text(
     payload: SummerizeRequest,
     db = Depends(get_db),
-    user_id = Depends(get_current_user)
+    user_id = Depends(require_roles("USER")),
 ):
     controller = ActionController(db)
     summary = controller.summarize_section(payload.article_id, payload.format, user_id)
@@ -25,7 +25,7 @@ def get_summarized_text(
 def generate_quiz(
     payload: QCMRequest,
     db = Depends(get_db),
-    user_id = Depends(get_current_user)
+    user_id = Depends(require_roles("USER")),
 ):
     controller = ActionController(db)
     result = controller.generate_quiz(payload.article_id, payload.n_questions, user_id)
@@ -37,7 +37,7 @@ def generate_quiz(
 def translate_text(
     payload: TranslateRequest,
     db = Depends(get_db),
-    user_id = Depends(get_current_user)
+    user_id = Depends(require_roles("USER")),
 ):
     controller = ActionController(db)
     translated_text = controller.translate_text(payload.article_id, payload.lang, user_id)
@@ -49,7 +49,7 @@ def translate_text(
 def translate_text(
     payload: QuizScoreRequest,
     db = Depends(get_db),
-    user_id = Depends(get_current_user)
+    user_id = Depends(require_roles("USER")),
 ):
     controller = ActionController(db)
     result = controller.get_score(payload.quiz_id, payload.answers, user_id)
@@ -61,7 +61,7 @@ def translate_text(
 @router.get("/history")
 def get_actions_history(
     db = Depends(get_db),
-    user_id = Depends(get_current_user)
+    user_id = Depends(require_roles("USER")),
 ):
     controller = ActionController(db)
     result = controller.get_history(user_id)

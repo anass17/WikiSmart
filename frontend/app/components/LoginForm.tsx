@@ -50,7 +50,7 @@ const LoginForm: React.FC = () => {
       localStorage.setItem("last_name", response.last_name);
 
       setTimeout(() => {
-        navigate("/actions");
+        navigate("/user/dashboard");
       }, 2000)
 
     } else if (request.status == 401) {

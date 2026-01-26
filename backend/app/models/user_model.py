@@ -27,3 +27,9 @@ class UserModel:
     def get_user_by_email(self, email):
         user = self.db.query(User).filter(User.email == email).first()
         return user
+    
+
+
+    def get_user_by_id(self, id):
+        user = self.db.query(User).filter(User.id == id).first()
+        return user

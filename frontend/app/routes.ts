@@ -10,4 +10,6 @@ export default [
     { path: "attempt/:id", file: "routes/attempt.tsx" },
     { path: "history", file: "routes/history.tsx" },
     { path: "logout", file: "routes/logout.tsx" },
+    { path: "user/dashboard", file: "routes/user_dashboard.tsx" },
+    { path: "dashboard", file: "routes/admin_dashboard.tsx" },
 ] satisfies RouteConfig;

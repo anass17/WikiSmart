@@ -7,6 +7,7 @@ from app.routes.auth_routes import router as auth_router
 from app.routes.ingestion_routes import router as ingestion_router
 from app.routes.action_routes import router as action_router
 from app.routes.quiz_routes import router as quiz_router
+from app.routes.statistics_routes import router as statistics_router
 import app.db.models
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,6 +44,7 @@ app.include_router(auth_router)
 app.include_router(ingestion_router)
 app.include_router(action_router)
 app.include_router(quiz_router)
+app.include_router(statistics_router)
 
 
 @app.get('/')

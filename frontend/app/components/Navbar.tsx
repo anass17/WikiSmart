@@ -20,14 +20,16 @@ const Navbar = () => {
         <nav className="flex justify-between items-center px-6 py-4 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white">
             <div className="text-2xl font-bold font-sans">WikiSmart</div>
             <div className="flex items-center space-x-4">
-                <span className="border-r px-4">{userName}</span>
-                <a href="/actions" className="hover:underline">
+                <a href="/user/dashboard" className="hover:text-slate-300 transition border-r px-4">
+                    {userName}
+                </a>
+                <a href="/actions" className="hover:text-slate-300 transition">
                     Actions
                 </a>
-                <a href="/quizzes" className="hover:underline">
+                <a href="/quizzes" className="hover:text-slate-300 transition">
                     Quizzes
                 </a>
-                <a href="/history" className="hover:underline">
+                <a href="/history" className="hover:text-slate-300 transition">
                     History
                 </a>
                 <button 

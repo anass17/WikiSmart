@@ -18,7 +18,7 @@ class AuthController:
 
         user = self.model.create_user(first_name, last_name, email, hash_password(password))
 
-        token = create_access_token({"sub": str(user.id)})
+        token = create_access_token({"sub": str(user.id), "role": user.role})
 
         return {
             "access_token": token,
@@ -37,7 +37,7 @@ class AuthController:
         if not verify_password(password, user.password):
             return None
 
-        token = create_access_token({"sub": str(user.id)})
+        token = create_access_token({"sub": str(user.id), "role": user.role})
         return {
             "access_token": token,
             "first_name": user.first_name,
