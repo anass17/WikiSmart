@@ -123,6 +123,10 @@ pytest tests/
 
 ## Visualisations
 
+## Home Page
+
+![Home Page](https://github.com/user-attachments/assets/9c1efab8-b864-42fe-a9cb-e87f17887a9e)
+
 ## Admin Dashboard
 
 ![Dashboard](https://github.com/user-attachments/assets/6eec6a55-7d5f-4752-807e-f1c6138b7c59)
