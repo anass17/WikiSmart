@@ -118,7 +118,7 @@ const UserDashboard = () => {
 
         <div className="">
           
-          {/* --- TOP ARTICLES (Table-like) --- */}
+            {/* --- TOP ARTICLES (Table-like) --- */}
             <section className="py-6">
                 <h2 className="text-lg font-semibold mb-4">Top 3 Articles</h2>
                 <div className="bg-white rounded-md shadow-sm border border-gray-200 overflow-hidden">
@@ -131,19 +131,28 @@ const UserDashboard = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {fullStats?.topArticles?.map(article => (
-                        <tr key={article.id} className="border-t border-gray-200">
-                        <td className="px-4 py-3 font-semibold text-blue-500">
-                            {article.title}
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                            {article.actionsCount}
-                        </td>
-                        <td className="px-4 py-3 text-right text-gray-500">
-                            {new Date(article.createdAt).toLocaleDateString()}
-                        </td>
-                        </tr>
-                    ))}
+                        {
+                            fullStats?.topArticles?.length == 0 && (
+                                <tr className="border-t border-gray-200">
+                                    <td className="px-4 py-10 text-sm text-slate-400 text-center" colSpan={3}>
+                                        You have no generate articles
+                                    </td>
+                                </tr>
+                            ) 
+                        }
+                        {fullStats?.topArticles?.map(article => (
+                            <tr key={article.id} className="border-t border-gray-200">
+                                <td className="px-4 py-3 font-semibold capitalize text-blue-500">
+                                    {article.title}
+                                </td>
+                                <td className="px-4 py-3 text-center">
+                                    {article.actionsCount}
+                                </td>
+                                <td className="px-4 py-3 text-right text-gray-500">
+                                    {new Date(article.createdAt).toLocaleDateString()}
+                                </td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
                 </div>

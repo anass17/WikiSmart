@@ -149,7 +149,7 @@ const AdminDashboard = () => {
             <div className="divide-y divide-slate-50">
               {fullStats?.topArticles.map((art, i) => (
                 <div key={i} className="p-5 hover:bg-slate-50 transition-colors">
-                  <h4 className="font-bold text-slate-800 text-sm mb-1 truncate">{art.title}</h4>
+                  <h4 className="font-bold text-slate-800 text-sm mb-1 truncate capitalize">{art.title}</h4>
                   <div className="flex justify-between text-xs text-slate-400">
                     <span>{new Date(art.createdAt).toDateString()}</span>
                     <span className="font-bold text-blue-500">{art.actionsCount} Actions</span>

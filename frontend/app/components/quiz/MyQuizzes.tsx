@@ -349,7 +349,7 @@ const MyQuizzes = () => {
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase">Best Score</p>
                       <div className={`mt-1 px-3 py-1 rounded-full border font-bold text-sm inline-block ${getScoreColor(quiz.bestScore, +quiz.questionsCount)}`}>
-                        {quiz.bestScore} / {quiz.questionsCount}
+                        {quiz.bestScore || 0} / {quiz.questionsCount}
                       </div>
                     </div>
                     <div className="text-right">
@@ -425,7 +425,7 @@ const MyQuizzes = () => {
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
                   <p className="text-[10px] font-bold text-blue-400 uppercase">Best Score</p>
-                  <p className="text-2xl font-black text-blue-700">{selectedQuiz?.bestScore} / {selectedQuiz?.questionsCount}</p>
+                  <p className="text-2xl font-black text-blue-700">{selectedQuiz?.bestScore || 0} / {selectedQuiz?.questionsCount}</p>
                 </div>
                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                   <p className="text-[10px] font-bold text-slate-400 uppercase">Questions</p>

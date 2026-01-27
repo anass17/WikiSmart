@@ -122,7 +122,7 @@ const QuizRetry = () => {
               </div>
               <div className="text-center px-4">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Best Score</p>
-                <p className="text-xl font-bold text-emerald-500">{quizDetails?.best_score} / {quizDetails?.questions_count}</p>
+                <p className="text-xl font-bold text-emerald-500">{quizDetails?.best_score || 0} / {quizDetails?.questions_count}</p>
               </div>
             </div>
           </div>
