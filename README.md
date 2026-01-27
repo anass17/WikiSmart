@@ -36,23 +36,23 @@ Face à la surcharge informationnelle, WikiSmart Edu réduit le temps de compré
 
 ## Fonctionnalités Clés
 
-1. Ingestion de Contenu
+**1. Ingestion de Contenu**
 
 - **Wikipedia :** Extraction intelligente via URL (nettoyage des underscores, segmentation par sections ===).
 - **PDF :** Téléchargement et parsing de documents via LangChain.
 
-2. Traitement IA (Prompt Engineering)
+**2. Traitement IA (Prompt Engineering)**
 
 - **Résumé :** Choix du format (Court ou Moyen) via Groq.
 - **Traduction :** Support multilingue (FR, EN, AR, ES).
 - **Génération de Quiz :** QCM à 4 options et questions ouvertes, retournés au format JSON strict.
 
-3. Gestion des Rôles
+**3. Gestion des Rôles**
 
 | Rôle              | Permissions |
 | ----------------- | ----------- |
-| Utilisateur       | Ingestion, Actions IA, Historique, Scores aux Quiz, Export (PDF/TXT). |
-| Administrateur    | Gestion des comptes, Statistiques globales (Inscriptions, Volumes d'articles, QCM générés). |
+| Utilisateur       | Ingestion, Actions IA, Historique, Scores aux Quiz. |
+| Administrateur    | Statistiques globales (Inscriptions, Volumes d'articles, QCM générés). |
 
 
 ## Installation et Configuration
@@ -64,22 +64,52 @@ Face à la surcharge informationnelle, WikiSmart Edu réduit le temps de compré
 
 ### Installation
 
-1. Cloner le dépôt :
+**1. Cloner le dépôt :**
 
 ```Bash
 git clone https://github.com/anass17/WikiSmart.git
-cd wikismart-edu
+cd WikiSmart
 ```
 
-2. Configurer les variables d'environnement : 
+**2. Configurer les variables d'environnement :**
 
-Créez un fichier `.env` à la racine :
+Copier le fichier d’exemple :
 
-3. Lancer avec Docker :
+```Bash
+cp .env_example .env
+```
+
+Modifier le fichier `.env` et renseigner les variables d’environnement nécessaires
+
+**3. Génération de la clé secrète JWT :**
+
+Générer une clé secrète sécurisée pour la signature des tokens JWT :
+
+```Bash
+openssl rand -base64 32
+```
+
+- Copier la clé générée
+- La renseigner dans le fichier .env (ex : SECRET_KEY=...)
+
+**4. Lancer avec Docker :**
 
 ```Bash
 docker-compose up --build
 ```
+
+**5. Accès à l’application :**
+
+Une fois l’application démarrée :
+
+- Accès à l’API :
+`http://localhost:8000`
+
+- Accès à la documentation interactive :
+`http://localhost:8000/docs`
+
+- Accès à l'application React :
+`http://localhost:3000/login`
 
 ### Tests & Qualité
 
