@@ -3,8 +3,18 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.db.base import Base
-from app.main import app
 from app.db.deps import get_db
+from app.main import app
+from app.core.deps import get_current_user
+
+
+def override_get_current_user():
+    return {
+        "sub": "1", 
+        "role": "USER"
+    }
+
+app.dependency_overrides[get_current_user] = override_get_current_user
 
 
 # Crée une DB SQLite temporaire pour les tests

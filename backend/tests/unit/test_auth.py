@@ -21,13 +21,11 @@ def test_register_invalid_password(client):
 
 
 def test_login(client):
-    # D'abord, créer un utilisateur
     client.post(
         "/auth/register",
         json={"first_name": "new", "last_name": "user", "email": "login@example.com", "password": "Password1"}
     )
 
-    # Ensuite, tester login
     response = client.post(
         "/auth/login",
         json={"email": "login@example.com", "password": "Password1"}
